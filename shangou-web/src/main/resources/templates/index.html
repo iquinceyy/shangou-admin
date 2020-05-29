@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="fragment/js::js"></div>
+</head>
+<body>
+<form id="query">
+    请输入用户名：<input type="text" class="form-control" name="username" id="username">
+    请输入密码：<input type="text" class="form-control" name="password" id="password">
+    <button type="submit" >提交</button>
+</form>
+
+<script th:inline="javascript" type="text/javascript">
+    layui.use(['layer', 'table', 'form'], function () {
+        var $ = layui.$;
+        console.log(("#username").val)
+        console.log(("#password").val)
+            $.ajax({
+                type: "POST",
+                url: "login",
+                data: {username:18223170162,password:123456},
+                dataType: 'json',
+                success: function (msg) {
+                    //alert(msg);
+                    if (msg == 1) {
+                        console.log(123);
+                    } else {
+                        console.log(456);
+                    }
+                }
+            });
+    });
+</script>
+</body>
+</html>
+

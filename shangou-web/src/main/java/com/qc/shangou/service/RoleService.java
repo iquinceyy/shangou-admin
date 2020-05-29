@@ -1,0 +1,13 @@
+package com.qc.shangou.service;
+
+import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.query.RoleQuery;
+
+/**
+ * Author quincey
+ * Date 2020/5/29 15:56
+ */
+public interface RoleService {
+    PageDTO ajaxList(RoleQuery query);
+
+}

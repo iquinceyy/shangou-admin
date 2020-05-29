@@ -1,0 +1,34 @@
+server:
+  port: 80 #\u542F\u52A8\u7AEF\u53E380
+#  servlet:
+#    context-path: /apis  #\u914D\u7F6E\u4E0A\u4E0B\u6587\u8DEF\u5F84
+spring:
+  datasource:
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.5.196:3306/demo_db?serverTimezone=Asia/Shanghai  # \u6570\u636E\u5E93\u5730\u5740
+    type: com.alibaba.druid.pool.DruidDataSource
+  messages:
+    basename: i18n/validate  #\u8D44\u6E90 \u8BFB\u53D6\u6587\u4EF6\u6240\u5728\u76EE\u5F55
+  profiles:
+    active: dev
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true  # \u6570\u636E\u5E93\u4E0B\u5212\u7EBF\u8F6C\u9A7C\u5CF0
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #\u6709\u4E9B\u73A9\u5BB6\u662F\u8FD9\u4E48\u914D\u7F6E\u7684
+  mapper-locations: classpath*:mybatis/mapper/**/*.xml  # mybatis\u7684mapper\u6587\u4EF6\u4F4D\u7F6E
+---
+logging:
+  level:
+    com.lh.shangou.dao: info  #dao\u91CC\u8FB9\u8981\u914D\u7F6E\u6210debug\u4EE5\u4E0B\u7684\u7EA7\u522B\uFF0C\u624D\u80FD\u591F\u770B\u5230sql\u8BED\u53E5\uFF0C\u8FD8\u6709\u4E00\u4E2A\u7EA7\u522B TARCE;\u66F4\u8BE6\u7EC6\u7684\u7EA7\u522B\uFF0C\u80FD\u591F\u770B\u5230\u67E5\u8BE2\u51FA\u6765\u7684\u7ED3\u679C
+spring:
+  profiles: pro
+---
+logging:
+  level:
+    com.lh.shangou.dao: trace  #dao\u91CC\u8FB9\u8981\u914D\u7F6E\u6210debug\u4EE5\u4E0B\u7684\u7EA7\u522B\uFF0C\u624D\u80FD\u591F\u770B\u5230sql\u8BED\u53E5\uFF0C\u8FD8\u6709\u4E00\u4E2A\u7EA7\u522B TARCE;\u66F4\u8BE6\u7EC6\u7684\u7EA7\u522B\uFF0C\u80FD\u591F\u770B\u5230\u67E5\u8BE2\u51FA\u6765\u7684\u7ED3\u679C
+spring:
+  profiles: dev
+
+
