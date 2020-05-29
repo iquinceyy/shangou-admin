@@ -244,37 +244,37 @@
 
 
         //监听工具条
-        table.on('tool(roleTable)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-            var d = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            switch (layEvent) {
-                case 'updateData':
-                    editOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
-                        type: 1,
-                        title: "商品修改",
-                        content: $("#editForm").html()
-                    });
-                    form.render();
-
-                    $("#editUploadImg").click(function () {// 点击图片就触发这个file
-                        $("#editPic").click();
-                    });
-
-                    $("#editPic").change(function () {
-                        imgPreview(this.files[0], $("#editUploadImg")[0]);
-                    });
-                    $("#title").val(d.title);
-                    $("#oldPrice").val(d.oldPrice);
-                    $("#nowPrice").val(d.nowPrice);
-
-                    $("#sureEdit")[0].goodsId = d.goodsId;
-                    $("#editUploadImg").attr("src", d.img);
-                    break;
-                case 'deleteData':
-                    layer.msg('删除');
-                    break;
-            }
-        });
+        // table.on('tool(roleTable)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        //     var d = obj.data; //获得当前行数据
+        //     var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+        //     switch (layEvent) {
+        //         case 'updateData':
+        //             editOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+        //                 type: 1,
+        //                 title: "商品修改",
+        //                 content: $("#editForm").html()
+        //             });
+        //             form.render();
+        //
+        //             $("#editUploadImg").click(function () {// 点击图片就触发这个file
+        //                 $("#editPic").click();
+        //             });
+        //
+        //             $("#editPic").change(function () {
+        //                 imgPreview(this.files[0], $("#editUploadImg")[0]);
+        //             });
+        //             $("#title").val(d.title);
+        //             $("#oldPrice").val(d.oldPrice);
+        //             $("#nowPrice").val(d.nowPrice);
+        //
+        //             $("#sureEdit")[0].goodsId = d.goodsId;
+        //             $("#editUploadImg").attr("src", d.img);
+        //             break;
+        //         case 'deleteData':
+        //             layer.msg('删除');
+        //             break;
+        //     }
+        // });
 
 
         table.on('edit(roleTable)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -282,16 +282,6 @@
             console.log(obj.field); //当前编辑的字段名
             console.log(obj.data); //所在行的所有相关数据
         });
-        //
-        // // 监听行单击事件
-        // table.on('row(roleTable)', function (obj) {
-        //     console.log(obj.tr) //得到当前行元素对象
-        //     let trDom = obj.tr[0];// jsDom对象
-        //     console.log(trDom.arr)
-        //     layer.msg('单击事件')
-        //     //obj.del(); //删除当前行
-        //     //obj.update(fields) //修改当前行数据
-        // });
 
         // 工具栏监听事件监听事件
         table.on('toolbar(roleTable)', function (obj) {
@@ -329,25 +319,46 @@
         });
 
 
-        // tb.reload({
-        //     where: {title: "商品"}
-        // });// 表格重新加载
+        // //监听工具条
+        table.on('tool(roleTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            // console.log(obj);
+            var data = obj.data; //获得当前行数据
 
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话） --- 这个是jquery对象
 
-        //
-        // let open = layer.open({// 就回返回一个index对象
-        //     type: 1
-        //     , title: "这个是一个信息框"
-        //     , content: $("#div").html()
-        //     , shadeClose: true // 这个是点击遮罩层是否关闭弹框
-        // })
-
-        // layer.confirm('您确定删除吗?', {icon: 3, title: '确定吗？'}, function (index) {
-        //     //do something
-        //     alert('执行ajax请求去删除数据');
-        //
-        //     layer.close(index);// 关闭某个弹框，传入弹框的下标
-        // });
+            if (layEvent=="deleteData") { //查看
+                layer.confirm('确定删除！', function (index) {
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    $.ajax({
+                        type:"post",
+                        url:"http://localhost:80/pages/back/role/delete",
+                        dataType:'json',
+                        data:{roleId:data.roleId}
+                    });
+                });
+            }else if (layEvent="updateData"){
+                editOpen=layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+                    type:1,
+                    title: "商品修改",
+                    content: $("#editForm").html()
+                });
+                form.render();
+                $("#editUploadImg").click(function () {
+                    $("#editPic").click();
+                });
+                $("#editPic").change(function () {
+                    imgPreview(this.files[0],$("#editUploadImg")[0]);
+                });
+                $("#title").val(data.title),
+                    $("#oldPrice").val(data.oldPrice),
+                    $("#nowPrice").val(data.nowPrice),
+                    $("#sureEdit")[0].goodsId = data.goodsId,
+                    $("#editUploadImg").attr("src",data.img);
+            }
+        });
 
     });
 

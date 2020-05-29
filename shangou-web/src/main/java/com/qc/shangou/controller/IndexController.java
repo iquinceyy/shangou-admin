@@ -1,7 +1,10 @@
 package com.qc.shangou.controller;
 
+import com.qc.shangou.dao.RoleDao;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
 
 /**
  * Author quincey
@@ -9,15 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class IndexController {
+    @Resource
+    RoleDao roleDao;
+
     @RequestMapping("index")
     String index()
     {
         return "index";
     }
 
-    @RequestMapping("login2")
-    String login() {
-
-        return "login2";
-    }
 }
