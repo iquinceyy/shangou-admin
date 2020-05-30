@@ -28,4 +28,6 @@ public interface RoleDao {
     List<RoleVO> ajaxList(RoleQuery query);
 
     Integer ajaxListCount(RoleQuery query);
+
+    int updateRole(Role role);
 }

@@ -5,10 +5,9 @@ import com.qc.shangou.pojo.query.RoleQuery;
 
 /**
  * Author quincey
- * Date 2020/5/29 15:56
+ * Date 2020/5/30 15:52
  */
-public interface RoleService {
+public interface PermissionService {
 
     PageDTO ajaxList(RoleQuery query);
-
 }

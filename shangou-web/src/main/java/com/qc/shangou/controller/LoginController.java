@@ -7,7 +7,9 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,14 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginController {
 
     @RequestMapping("/login")
-    String login(Model model, HttpServletRequest request) {// 这个方法是执行登录操作的
+    String login(Model model,
+                 String username,String password
+                ) {// 这个方法是执行登录操作的
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        System.out.println(username);
-        System.out.println(password);
         // 获取subject
-        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken("18223170162", "123456");
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken("18875150682", "123456");
         Subject subject = SecurityUtils.getSubject();
         try {
             subject.login(usernamePasswordToken);// 只要 执行login方法，那么它就会跑到userRealm里边的认证方法（doGetAuthenticationInfo）

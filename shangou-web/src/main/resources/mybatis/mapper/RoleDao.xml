@@ -121,6 +121,33 @@
       `system` = #{system,jdbcType=BOOLEAN}
     where role_id = #{roleId,jdbcType=INTEGER}
   </update>
+    <update id="updateRole">
+        update role
+        <set>
+            <if test="name != null and name!='">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null and sort!=''">
+                sort = #{sort,jdbcType=INTEGER},
+            </if>
+            <if test="icon != null and icon!=''">
+                icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null and flag!=''">
+                flag = #{flag,jdbcType=VARCHAR},
+            </if>
+            <if test="note != null and flag!=''">
+                note = #{note,jdbcType=VARCHAR},
+            </if>
+            <if test="permissions != null and flag!=''">
+                permissions = #{permissions,jdbcType=VARCHAR},
+            </if>
+            <if test="system != null and flag!=''">
+                `system` = #{system,jdbcType=BOOLEAN},
+            </if>
+        </set>
+        where role_id = #{roleId,jdbcType=INTEGER}
+    </update>
 
     <select id="selectHisRolesByRoles" resultType="com.qc.shangou.pojo.vo.RoleVO">
         select

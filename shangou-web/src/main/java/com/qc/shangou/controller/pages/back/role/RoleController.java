@@ -38,16 +38,26 @@ public class RoleController {
     }
 
     @RequestMapping("delete")
-    int deteleRoleByRoleId(Integer roleId){
+    @ResponseBody
+    ResponseDTO deteleRoleByRoleId(Integer roleId){
 
         System.out.println("delete");
-        roleDao.deleteByPrimaryKey(roleId);
-        return 1;
+
+        return ResponseDTO.get(roleDao.deleteByPrimaryKey(roleId)==1);
     }
 
     @RequestMapping("add")
+    @ResponseBody
     ResponseDTO addRole(Role role){
+        System.out.println("add");
 
        return ResponseDTO.get(roleDao.insertSelective(role)==1);
+    }
+
+    @RequestMapping("edit")
+    @ResponseBody
+    ResponseDTO editRole(Role role){
+        System.out.println("edit");
+        return ResponseDTO.get(roleDao.updateByPrimaryKeySelective(role)==1);
     }
 }
