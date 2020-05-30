@@ -14,5 +14,8 @@ public class PermissionQuery extends PageQuery {
     private String name;
     private String note;
     private String flag;
+
     private String fla12;
+    private String fla112;
+    private String fla122;
 }
