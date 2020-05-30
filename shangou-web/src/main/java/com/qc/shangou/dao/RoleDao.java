@@ -29,5 +29,4 @@ public interface RoleDao {
 
     Integer ajaxListCount(RoleQuery query);
 
-    int updateRole(Role role);
 }

@@ -1,7 +1,8 @@
 package com.qc.shangou.service;
 
 import com.qc.shangou.pojo.dto.PageDTO;
-import com.qc.shangou.pojo.query.RoleQuery;
+import com.qc.shangou.pojo.query.PermissionQuery;
+import org.springframework.stereotype.Service;
 
 /**
  * Author quincey
@@ -9,5 +10,5 @@ import com.qc.shangou.pojo.query.RoleQuery;
  */
 public interface PermissionService {
 
-    PageDTO ajaxList(RoleQuery query);
+    PageDTO ajaxList(PermissionQuery query);
 }

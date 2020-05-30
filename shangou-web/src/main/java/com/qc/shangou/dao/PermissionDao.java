@@ -1,6 +1,7 @@
 package com.qc.shangou.dao;
 
 import com.qc.shangou.pojo.entity.Permission;
+import com.qc.shangou.pojo.query.PermissionQuery;
 import com.qc.shangou.pojo.vo.PermissionVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +28,8 @@ public interface PermissionDao {
     List<PermissionVO> selectPermissionsByIds(String permissions);
 
     List<PermissionVO> selectPermissionsBySet(@Param("ids") Set<String> paramSet);
+
+    List<PermissionVO> ajaxPermissionList(PermissionQuery query);
+
+    Integer ajaxCountPermission(PermissionQuery query);
 }

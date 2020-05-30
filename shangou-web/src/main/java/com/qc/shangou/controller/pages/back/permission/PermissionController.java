@@ -1,6 +1,7 @@
-package com.qc.shangou.controller.pages.back.role;
+package com.qc.shangou.controller.pages.back.permission;
 
 import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.query.PermissionQuery;
 import com.qc.shangou.pojo.query.RoleQuery;
 import com.qc.shangou.service.PermissionService;
 import org.springframework.stereotype.Controller;
@@ -27,9 +28,7 @@ public class PermissionController {
 
     @RequestMapping("ajaxList")
     @ResponseBody
-    PageDTO ajaxList(RoleQuery query) {
-
+    PageDTO ajaxList(PermissionQuery query) {
         return permissionService.ajaxList(query);
     }
-
 }
