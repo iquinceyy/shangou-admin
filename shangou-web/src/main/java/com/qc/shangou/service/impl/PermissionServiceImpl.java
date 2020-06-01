@@ -3,6 +3,8 @@ package com.qc.shangou.service.impl;
 import com.qc.shangou.dao.PermissionDao;
 import com.qc.shangou.dao.RoleDao;
 import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.Permission;
 import com.qc.shangou.pojo.query.PermissionQuery;
 import com.qc.shangou.pojo.query.RoleQuery;
 import com.qc.shangou.pojo.vo.PermissionVO;
@@ -31,5 +33,10 @@ public class PermissionServiceImpl implements PermissionService {
         Integer count = permissionDao.ajaxCountPermission(query);
 
         return PageDTO.setPageData(count,permissionVOS);
+    }
+
+    @Override
+    public ResponseDTO editPermission(Permission permission) {
+        return ResponseDTO.get(permissionDao.updateByPrimaryKeySelective(permission) == 1);
     }
 }

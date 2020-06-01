@@ -9,7 +9,7 @@ import com.qc.shangou.pojo.query.RoleQuery;
  * Author quincey
  * Date 2020/5/29 15:56
  */
-public interface RoleService {
+public interface RoleService extends BaseService{
 
     PageDTO ajaxList(RoleQuery query);
 
