@@ -11,7 +11,7 @@ import java.util.List;
  * Author quincey
  * Date 2020/5/29 16:12
  */
-public interface UserService {
+public interface UserService extends BaseService{
     boolean addUser();
 
     /**
@@ -27,4 +27,7 @@ public interface UserService {
     List<PermissionVO> selectHisPermissionByRoles(List<RoleVO> roles);
 
     UserVO selectDbUserByPhone(UserQuery query);
+
+    // 检测用户是否存在
+    boolean checkPhoneExist(String phone);
 }

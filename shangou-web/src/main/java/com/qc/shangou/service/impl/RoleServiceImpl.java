@@ -2,6 +2,8 @@ package com.qc.shangou.service.impl;
 
 import com.qc.shangou.dao.RoleDao;
 import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.Role;
 import com.qc.shangou.pojo.query.RoleQuery;
 import com.qc.shangou.pojo.vo.RoleVO;
 import com.qc.shangou.service.RoleService;
@@ -25,5 +27,10 @@ public class RoleServiceImpl implements RoleService {
         Integer count = roleDao.ajaxListCount(query);
 
         return PageDTO.setPageData(count,roleVOS);
+    }
+
+    @Override
+    public ResponseDTO editRole(Role role) {
+        return ResponseDTO.get(roleDao.updateByPrimaryKeySelective(role) == 1);
     }
 }

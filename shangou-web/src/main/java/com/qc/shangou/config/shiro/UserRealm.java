@@ -14,6 +14,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,19 +41,46 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         Object principal = authenticationToken.getPrincipal();// 获取身份（用户名）
         Object credentials = authenticationToken.getCredentials();// 获取密码（密码）：是前端传递来的，不具备真实性
+        Session session = SecurityUtils.getSubject().getSession();
 
-        String password = new String((char[]) credentials);// 前端传递过来的// String.valueOf((char[]) credentials)
+        Object code = session.getAttribute("code");
         UserQuery query = new UserQuery();
-        query.setPhone((String) principal);
-        UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
-        if (dbUser == null) {
-            throw new UnknownAccountException("账户或密码错误");
-        } else {// 账户虽然存在，就要开始比较密码
-            if (!PasswordUtil.encodePassword(password).equals(dbUser.getPassword())) {
-                // 缓存数据库里边存当前用户密码错误的次数
-                throw new CredentialsException("账户或密码错误");
+
+        if (StringUtils.isEmpty(code)){//常规密码验证
+            String password = new String((char[]) credentials);// 前端传递过来的// String.valueOf((char[]) credentials)
+            query.setPhone((String) principal);
+            UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
+            if (dbUser == null) {
+                throw new UnknownAccountException("账户或密码错误");
+            } else {// 账户虽然存在，就要开始比较密码
+                if (!PasswordUtil.encodePassword(password).equals(dbUser.getPassword())) {
+                    // 缓存数据库里边存当前用户密码错误的次数
+                    throw new CredentialsException("账户或密码错误");
+                }
+            }
+            session.setAttribute("userId", dbUser.getUserId());
+            session.setAttribute("nickName", dbUser.getNickName());
+            session.setAttribute("phone", dbUser.getPhone());
+            // 设置角色
+            List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
+            session.setAttribute("hisRoles",roleVOS);
+        }else{//短信验证
+            //获取发送的短信验证码
+            Object loginCode = session.getAttribute("loginCode");
+            if (code.equals(loginCode)){//登录成功
+                query.setPhone((String) principal);
+                UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
+                session.setAttribute("userId",dbUser.getUserId());
+                session.setAttribute("nickName",dbUser.getNickName());
+                session.setAttribute("phone",dbUser.getPhone());
+                //设置角色
+                List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
+                session.setAttribute("hisRoles",roleVOS);
+            }else {
+                throw  new CredentialsException("验证码错误");
             }
         }
+
         //第二种方式
 //        query.setPassword(PasswordUtil.encodePassword(password));
 //        UserVO u = userService.login(query);
@@ -62,13 +90,7 @@ public class UserRealm extends AuthorizingRealm {
 //        }
         // 应该设置 session
 
-        Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute("userId", dbUser.getUserId());
-        session.setAttribute("nickName", dbUser.getNickName());
-        session.setAttribute("phone", dbUser.getPhone());
-        // 设置角色
-        List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
-        session.setAttribute("hisRoles",roleVOS);
+
 
         // 设置权限
         return new SimpleAuthenticationInfo(authenticationToken.getPrincipal(), authenticationToken.getCredentials(), "userRealm");

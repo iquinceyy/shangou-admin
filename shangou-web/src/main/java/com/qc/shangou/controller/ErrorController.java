@@ -12,11 +12,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 public class ErrorController {
+
     @RequestMapping("/showErrorPage")
     String showErrorPage(Model model, HttpServletRequest request) {
         model.addAttribute("msg", request.getAttribute("msg"));
-        model.addAttribute("qwer", request.getAttribute("msg"));
-        System.out.println(123+"错误controller");
         return "errorPage";
     }
 }

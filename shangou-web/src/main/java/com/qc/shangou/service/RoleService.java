@@ -1,6 +1,8 @@
 package com.qc.shangou.service;
 
 import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.Role;
 import com.qc.shangou.pojo.query.RoleQuery;
 
 /**
@@ -10,5 +12,8 @@ import com.qc.shangou.pojo.query.RoleQuery;
 public interface RoleService {
 
     PageDTO ajaxList(RoleQuery query);
+
+    ResponseDTO editRole(Role role);
+
 
 }

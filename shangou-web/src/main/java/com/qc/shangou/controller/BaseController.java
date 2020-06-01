@@ -1,6 +1,9 @@
 package com.qc.shangou.controller;
 
 import com.qc.shangou.config.webmvc.WebMvcConfig;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,5 +47,9 @@ public class BaseController {
 
     protected HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    }
+
+    protected Session getSession(){
+        return SecurityUtils.getSubject().getSession();
     }
 }

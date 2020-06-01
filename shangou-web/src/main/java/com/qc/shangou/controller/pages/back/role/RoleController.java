@@ -58,6 +58,6 @@ public class RoleController {
     @ResponseBody
     ResponseDTO editRole(Role role){
         System.out.println("edit");
-        return ResponseDTO.get(roleDao.updateByPrimaryKeySelective(role)==1);
+        return roleService.editRole(role);
     }
 }

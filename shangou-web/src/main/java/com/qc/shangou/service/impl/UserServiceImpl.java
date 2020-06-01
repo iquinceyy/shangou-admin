@@ -46,22 +46,10 @@ public class UserServiceImpl implements UserService {
         UserVO u = userDao.selectUserByPhone(phone);
         if (!StringUtils.isEmpty(u.getRoles())) {
             List<RoleVO> roles = roleDao.selectHisRolesByRoles(u.getRoles());
-            // 在查询完成roles之后，我们应该 roles的permissionVOS赋值
-            List<PermissionVO> permissionVOS = this.selectHisPermissionByRoles(roles);// 查出所有的权限
-            Map<Integer, List<PermissionVO>> collect = permissionVOS.stream().collect(Collectors.groupingBy(PermissionVO::getPermissionId));
-            for (RoleVO r : roles) {
-                String permissions = r.getPermissions();
-                if (!StringUtils.isEmpty(permissions)) {
-                    String[] split = permissions.split(",");
-                    List<PermissionVO> li = new ArrayList<>();
-                    for (String s : split) {
-                        PermissionVO p = collect.get(Integer.valueOf(s)).get(0);
-                        li.add(p);
-                    }
-                    r.setPermissionVOS(li);
-                }
+            if (!CollectionUtils.isEmpty(roles)) {
+                List<PermissionVO> permissionVOS = this.selectHisPermissionByRoles(roles);// 查出所有的权限
+                return getRoleVOList(roles, permissionVOS);
             }
-            return roles;
         }
         return null;
     }
@@ -94,5 +82,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO selectDbUserByPhone(UserQuery query) {
         return userDao.selectUserByPhone(query.getPhone());
+    }
+
+    @Override
+    public boolean checkPhoneExist(String phone) {
+
+        return userDao.selectUserByPhone(phone) != null;
     }
 }
