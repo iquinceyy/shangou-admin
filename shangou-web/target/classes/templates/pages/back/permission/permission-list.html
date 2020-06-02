@@ -245,10 +245,10 @@
                 data: formData,// 要上传的参数
                 dataType: 'json',// 服务器响应数据：json,text,html,xml
                 type: 'post',// ajax请求的方式，post或get
+                processData: false,//布尔值,一般都不用设置，规定通过请求发送的数据是否转换为查询字符串。默认是 true。如果此时上传的时候，有图片，这里必须设置false,
                 error: function () {//请求错误的时候，会触发此函数
                     console.log("错误");
                 },
-                processData: false,//布尔值,一般都不用设置，规定通过请求发送的数据是否转换为查询字符串。默认是 true。如果此时上传的时候，有图片，这里必须设置false,
                 success: function (res) {// 请求成功，回调函数,data，指的就是服务器返回的数据
                     if (res.res) {
                         layer.msg(res.msg);
@@ -277,6 +277,35 @@
                 layer.msg(res.msg);
             })
         });
+
+        //监听行中工具条
+        table.on('tool(permissionTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话） --- 这个是jquery对象
+            if (layEvent=="deleteData") {
+                let permissions = [];
+                permissions.push(data);
+                layer.confirm('确定删除吗?', function (index) {
+                    // 第一步，拿到所有选中的行的角色id
+                    deletePermissions(permissions,layer,tb);//批量删除角色
+                    layer.close(index);
+                });
+            }
+        });
+
+        //编辑
+        table.on('edit(permissionTable)', function(obj){
+            console.log(obj.value); //得到修改后的值
+            console.log(obj.field); //当前编辑的字段名
+            console.log(obj.data); //所在行的所有相关数据
+            let p ={};
+            p.permissionId = obj.data.permissionId;
+            p[obj.field]= obj.value;
+            $.post('pages/back/permission/editPermission',p,function (res) {
+                layer.msg(res.msg);
+            })
+        })
 
         //修改
         form.on('submit(sureEdit)', function (data) {
@@ -336,6 +365,73 @@
                     });
                     break;
                 case 'dispatchPermission':
+                    layer.msg('分配权限');
+                    //1.获取选中的权限
+                    let checkS = table.checkStatus('permissionTable');
+                    //获取选中行数据
+                    let checkPermissions=checkS.data;
+                    console.log(checkPermissions);
+                    //第一个实例
+                    let systemRolesOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+                        type: 1,
+                        offset: '10px',
+                        area: '60%',
+                        title: "系统级角色列表",
+                        content: $("#systemRolesTableDiv").html()
+                    });
+                    let systemRolesTable = table.render({// 渲染表格
+                        elem: '#systemRolesTable'
+                        , url: '/pages/back/role/getSystemRoles' //服务后台的数据接口
+                        , cols: [[ //表头，这里是两个[[开头，两个]]结尾
+                            {field: '', type: 'radio', title: '单选'}
+                            , {field: 'name', title: '角色名称', width: 160}
+                            , {field: 'flag', title: '标记', width: 160}
+                            , {field: 'note', title: '备注', width: 260}
+                        ]]
+                    });
+                    // 第二步：拿到勾选的角色
+                    let r;
+                    table.on('radio(systemRolesTable)', function (obj) {
+                        let role = obj.data;
+                        r = {};
+                        r.roleId = role.roleId;
+                        let ps = [];// 权限数组
+                        checkPermissions.forEach((p) => {
+                            let permission = {};
+                            permission.permissionId = p.permissionId;
+                            ps.push(permission)
+                        });
+                        r.permissionVOS = ps;
+                    });
+                    $("#addPermissionToRole").click(function () {
+                        // 第一步：拿到所有勾选的权限
+                        if (checkPermissions.length === 0) {
+                            layer.msg('请选中一些权限，先');
+                            return;
+                        }
+                        if (r == undefined) {
+                            layer.msg('请选中一个角色，先');
+                            return;
+                        }
+                        $.post('/pages/back/permission/addPermissionToRole', {str: JSON.stringify(r)}, function (res) {// 如果要传递数组还是要用application/json
+                            layer.msg(res.msg);
+                        });
+                    });
+                    $("#removePermissionFromRole").click(function () {
+                        // 第一步：拿到所有勾选的权限
+                        if (checkPermissions.length === 0) {
+                            layer.msg('请选中一些权限，先');
+                            return;
+                        }
+                        if (r == undefined) {
+                            layer.msg('请选中一个角色，先');
+                            return;
+                        }
+                        $.post('/pages/back/permission/removePermissionFromRole', {str: JSON.stringify(r)}, function (res) {// 如果要传递数组还是要用application/json
+                            layer.msg(res.msg);
+                        });
+                    });
+                    break;
 
             };
         });
@@ -346,34 +442,9 @@
             console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
         });
 
-        //监听行中工具条
-        table.on('tool(permissionTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-            var data = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话） --- 这个是jquery对象
-            if (layEvent=="deleteData") {
-                let permissions = [];
-                permissions.push(data);
-                layer.confirm('确定删除吗?', function (index) {
-                    // 第一步，拿到所有选中的行的角色id
-                    deletePermissions(permissions,layer,tb);//批量删除角色
-                    layer.close(index);
-                });
-            }
-        });
 
-        //编辑
-        table.on('edit(permissionTable)', function(obj){
-           console.log(obj.value); //得到修改后的值
-           console.log(obj.field); //当前编辑的字段名
-           console.log(obj.data); //所在行的所有相关数据
-            let p ={};
-            p.permissionId = obj.data.permissionId;
-            p[obj.field]= obj.value;
-            $.post('pages/back/permission/editPermission',p,function (res) {
-                layer.msg(res.msg);
-            })
-       })
+
+
 
 
 
