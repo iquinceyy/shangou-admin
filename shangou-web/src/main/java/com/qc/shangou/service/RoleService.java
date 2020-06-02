@@ -19,4 +19,8 @@ public interface RoleService extends BaseService{
 
 
     ResponseDTO deleteRoles(List<Role> roles);
+
+    // 获取系统级别的所有角色
+    PageDTO getSystemRoles();
+
 }

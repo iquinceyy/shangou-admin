@@ -56,10 +56,10 @@ public class PermissionController {
         return permissionService.editPermission(permission);
     }
 
-    @RequestMapping("add")
+    @RequestMapping("addPermissionToRole")
     @ResponseBody
     ResponseDTO addPermissionToRole(String str){
-        System.out.println("add");
+        System.out.println("addPermissionToRole");
         //把String变成对象
         RoleVO roleVO = JSON.parseObject(str, RoleVO.class);
         return permissionService.addPermissionToRole(roleVO);
@@ -71,5 +71,10 @@ public class PermissionController {
     ResponseDTO removePermissionFromRole(String str){
         RoleVO roleVO = JSON.parseObject(str, RoleVO.class);
         return permissionService.removePermissionFromRole(roleVO);
+    }
+    @RequestMapping("add")
+    @ResponseBody
+    ResponseDTO add(Permission permission) {// 把权限从角色里边移除
+        return permissionService.add(permission);
     }
 }

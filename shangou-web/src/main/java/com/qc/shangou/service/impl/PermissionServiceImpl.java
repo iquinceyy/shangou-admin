@@ -54,6 +54,7 @@ public class PermissionServiceImpl implements PermissionService {
         return ResponseDTO.get(permissionDao.deletePermissions(permissions)==permissions.size());
     }
 
+
     @Override
     public ResponseDTO addPermissionToRole(RoleVO r) {
         //1.通过这个参数 r的 roleId 查询获取这个角色
@@ -117,5 +118,10 @@ public class PermissionServiceImpl implements PermissionService {
         //8.把新的权限赋值给对应角色
 
         return ResponseDTO.get(roleDao.updateByPrimaryKeySelective(updateRole)==1);
+    }
+
+    @Override
+    public ResponseDTO add(Permission permission) {
+        return ResponseDTO.get(permissionDao.insertSelective(permission) == 1);
     }
 }

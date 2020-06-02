@@ -167,6 +167,12 @@
             </if>
         </where>
     </select>
+    <select id="getSystemRoles" resultType="com.qc.shangou.pojo.vo.RoleVO">
+        select
+        <include refid="Base_Column_List"/>
+        from role where `system`=1
+        order by sort
+    </select>
 
     <delete id="deleteByPrimaryKeys">
         delete from role where role_id in

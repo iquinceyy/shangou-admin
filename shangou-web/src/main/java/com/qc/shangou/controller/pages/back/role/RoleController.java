@@ -68,4 +68,9 @@ public class RoleController {
 
         return roleService.deleteRoles(roles);
     }
+    @RequestMapping("getSystemRoles")
+    @ResponseBody
+    PageDTO  getSystemRoles(){
+        return roleService.getSystemRoles();
+    }
 }

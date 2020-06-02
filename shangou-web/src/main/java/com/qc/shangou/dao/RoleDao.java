@@ -32,4 +32,6 @@ public interface RoleDao {
 
     //批量删除
     int deleteByPrimaryKeys(@Param("ids") List<Role> roles);
+
+    List<RoleVO> getSystemRoles();
 }

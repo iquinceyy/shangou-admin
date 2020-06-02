@@ -49,4 +49,11 @@ public class RoleServiceImpl implements RoleService {
         int x = roleDao.deleteByPrimaryKeys(roles);
         return ResponseDTO.get(x == roles.size());
     }
+
+    @Override
+    public PageDTO getSystemRoles() {
+        List<RoleVO> roleVOS = roleDao.getSystemRoles();
+
+        return PageDTO.setPageData(roleVOS.size(), roleVOS);
+    }
 }

@@ -165,7 +165,7 @@
 
   <delete id="deletePermissions">
     delete from permission where permission_id in
-    <foreach collection="ids" open="(" close=")" separator="，" item="p">
+    <foreach collection="ids" separator="," item="p" close=")" open="(">
       #{p.permissionId}
     </foreach>
   </delete>
