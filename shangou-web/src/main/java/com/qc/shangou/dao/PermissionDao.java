@@ -32,4 +32,6 @@ public interface PermissionDao {
     List<PermissionVO> ajaxPermissionList(PermissionQuery query);
 
     Integer ajaxCountPermission(PermissionQuery query);
+
+    int deletePermissions(@Param("ids") List<Permission> permissions);
 }

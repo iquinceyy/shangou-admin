@@ -3,6 +3,7 @@ package com.qc.shangou.dao;
 import com.qc.shangou.pojo.entity.Role;
 import com.qc.shangou.pojo.query.RoleQuery;
 import com.qc.shangou.pojo.vo.RoleVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface RoleDao {
 
     Integer ajaxListCount(RoleQuery query);
 
+    //批量删除
+    int deleteByPrimaryKeys(@Param("ids") List<Role> roles);
 }

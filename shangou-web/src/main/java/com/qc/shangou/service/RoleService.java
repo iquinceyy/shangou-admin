@@ -5,6 +5,8 @@ import com.qc.shangou.pojo.dto.ResponseDTO;
 import com.qc.shangou.pojo.entity.Role;
 import com.qc.shangou.pojo.query.RoleQuery;
 
+import java.util.List;
+
 /**
  * Author quincey
  * Date 2020/5/29 15:56
@@ -16,4 +18,5 @@ public interface RoleService extends BaseService{
     ResponseDTO editRole(Role role);
 
 
+    ResponseDTO deleteRoles(List<Role> roles);
 }

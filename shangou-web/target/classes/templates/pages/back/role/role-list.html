@@ -12,10 +12,7 @@
     }
 </style>
 <body>
-<!--分页组件-->
-<table id="roleTable" lay-filter="roleTable"></table>
-<form class="layui-form" style="padding:5px 0;display: flex;align-items: center;"
-      id="queryForm">
+<form class="layui-form" id="queryForm" style="padding:5px 0;display: flex;align-items: center;">
     <div class="layui-form-item" style="margin: 0">
         <label class="layui-form-label" style="width: fit-content;">名称</label>
         <input type="text" name="name"
@@ -36,6 +33,8 @@
         <button class="layui-btn" style="margin-left: 10px" lay-submit lay-filter="queryForm">查询</button>
     </div>
 </form>
+<!--分页组件-->
+<table id="roleTable" lay-filter="roleTable"></table>
 
 <script type="text/html" id="showPermissionTable">
     <table id="permissionTable" class="layui-table">
@@ -164,19 +163,45 @@
 </script>
 
 <script th:inline="javascript" type="text/javascript">
+    //批量删除
+    function deleteRoles(checkRoles,layer,tb) {
+        //只把id取出来
+        let arr=[];
+        checkRoles.forEach(function (r) {
+            let roleItem = {};
+            roleItem.roleId = r.roleId;
+            arr.push(roleItem);
+            if (arr.length>0){
+                $.ajax({
+                    url: "/pages/back/role/deleteRoles",
+                    contentType: "application/json",
+                    data:JSON.stringify(arr),//上传json字符换
+                    dataType:'json',
+                    type:'psot',
+                    processData: true,
+                    success:function (res) {
+                        layer.msg(res.msg);
+                        tb.reload();
+                    },
+                    error: function () {//请求错误的时候，会触发此函数
+                        console.log("错误");
+                    },
+                })
+            }
+        })
+    }
+
     layui.use(['layer', 'table', 'form'], function () {
 
-        // 我再js代码里边如何获取控制器传递过来的参数呢？
         let layer = layui.layer;// 弹出层
-        let goodsId = [[${goodsId}]];// 这么取获取,thymeleaf内联表达式
-
         let table = layui.table;// 分页组件
         let form = layui.form;// 分页组件
-        // let $ = layui.$;// 使用jquery
 
         var addOpen;
         var editOpen;
         let showPermissionOpen;
+
+
         //第一个实例
         let tb = table.render({// 渲染表格
             elem: '#roleTable'
@@ -190,10 +215,8 @@
                 , {field: 'flag', title: '标记', width: 160, edit: 'text'}
                 , {field: 'note', title: '备注', width: 160, edit: 'text'}
                 , {field: 'system', title: '系统级别', width: 180,templet: function (d) {// 这个d指的是本行的数据 js对象
-                        // console.log(d)
                         let color=d.system?'red':'';
                         return '<div style="color: '+color+';font-weight: bold">'+d.system+'</div>'
-
                     }}
                 , {
                     field: '', title: '操作', templet: function (d) {// 这个d指的是本行的数据 js对象
@@ -209,12 +232,13 @@
             , toolbar: 'default'
         });
 
+
         //查看
         form.on('submit(queryForm)', function (data) {
-            console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
-            console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
-            console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
-            console.log(tb);
+            // console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            // console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            // console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            // console.log(tb);
             tb.reload({
                 where: data.field
             });
@@ -294,8 +318,18 @@
                     });
                     form.render();
                     break;
-            }
-            ;
+                case'delete':
+                    //拿到所有选中行角色的id
+                    let checkStatus = table.checkStatus('roleTable');
+                    layer.confirm("确定删除吗？",function (index) {
+                        //选中行数据
+                        let checkRoles = checkStatus.data;
+                        //批量 删除选中数据
+                        deleteRoles(checkRoles,layer,tb);
+                        layer.close(index);
+                    });
+                    break;
+            };
         });
         table.on('checkbox(roleTable)', function (obj) {
             console.log(obj); //当前是否选中状态
@@ -304,26 +338,29 @@
             console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
         });
 
-
         //监听工具条
         table.on('tool(roleTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-            // console.log(obj);
             var data = obj.data; //获得当前行数据
 
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话） --- 这个是jquery对象
 
-            if (layEvent=="deleteData") { //查看
-                layer.confirm('确定删除！', function (index) {
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+            if (layEvent=="deleteData") {
+                let roles = [];
+                roles.push(data);
+                layer.confirm('确定删除吗?', function (index) {
+                    // 第一步，拿到所有选中的行的角色id
+                    deleteRoles(roles,layer,tb);//批量删除角色
                     layer.close(index);
-                    //向服务端发送删除指令
-                    $.ajax({
-                        type:"post",
-                        url:"http://localhost:80/pages/back/role/delete",
-                        dataType:'json',
-                        data:{roleId:data.roleId}
-                    });
+                    // obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    // layer.close(index);
+                    // //向服务端发送删除指令
+                    // $.ajax({
+                    //     type:"post",
+                    //     url:"http://localhost:80/pages/back/role/delete",
+                    //     dataType:'json',
+                    //     data:{roleId:data.roleId}
+                    // });
                 });
             }else if (layEvent=="showPermissions") {
                 showPermissionOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染

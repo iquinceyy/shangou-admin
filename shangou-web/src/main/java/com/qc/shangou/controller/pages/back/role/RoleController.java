@@ -7,10 +7,12 @@ import com.qc.shangou.pojo.entity.Role;
 import com.qc.shangou.pojo.query.RoleQuery;
 import com.qc.shangou.service.RoleService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Author quincey
@@ -59,5 +61,11 @@ public class RoleController {
     ResponseDTO editRole(Role role){
         System.out.println("edit");
         return roleService.editRole(role);
+    }
+    @RequestMapping("deleteRoles")
+    @ResponseBody
+    ResponseDTO deleteRoles(@RequestBody List<Role> roles) {
+
+        return roleService.deleteRoles(roles);
     }
 }

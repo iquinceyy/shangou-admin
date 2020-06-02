@@ -5,7 +5,10 @@ import com.qc.shangou.pojo.dto.ResponseDTO;
 import com.qc.shangou.pojo.entity.Permission;
 import com.qc.shangou.pojo.entity.Role;
 import com.qc.shangou.pojo.query.PermissionQuery;
+import com.qc.shangou.pojo.vo.RoleVO;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Author quincey
@@ -16,4 +19,11 @@ public interface PermissionService {
     PageDTO ajaxList(PermissionQuery query);
 
     ResponseDTO editPermission(Permission permission);
+
+    ResponseDTO deletePermissions(List<Permission> permission);
+
+    ResponseDTO addPermissionToRole(RoleVO rolevo);
+
+    ResponseDTO removePermissionFromRole(RoleVO rolevo);
+
 }

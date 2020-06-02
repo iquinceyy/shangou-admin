@@ -168,5 +168,12 @@
         </where>
     </select>
 
+    <delete id="deleteByPrimaryKeys">
+        delete from role where role_id in
+        <foreach collection="ids" open="(" close=")" item="r" separator=",">
+            #{r.roleId}
+        </foreach>
+    </delete>
+
 
 </mapper>

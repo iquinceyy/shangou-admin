@@ -24,7 +24,7 @@
     delete from permission
     where permission_id = #{permissionId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" keyColumn="permission_id" keyProperty="permissionId" parameterType="com.qc.shangou.pojo.entity.Permission" useGeneratedKeys="true">
+    <insert id="insert" keyColumn="permission_id" keyProperty="permissionId" parameterType="com.qc.shangou.pojo.entity.Permission" useGeneratedKeys="true">
     insert into permission (`name`, icon, sort,
       flag, note, `show`, url
       )
@@ -162,5 +162,13 @@
     </where>
     limit #{start},#{limit}
   </select>
+
+  <delete id="deletePermissions">
+    delete from permission where permission_id in
+    <foreach collection="ids" open="(" close=")" separator="，" item="p">
+      #{p.permissionId}
+    </foreach>
+  </delete>
+
 
 </mapper>
