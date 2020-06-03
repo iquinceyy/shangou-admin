@@ -42,11 +42,11 @@
                                         <div class="layui-input-block" style="width: 100px;margin-left: 0">
                                             <select id="patentType" lay-verify="required">
                                                 <option value=""></option>
-                                                <option value="0">北京</option>
-                                                <option value="1">上海</option>
-                                                <option value="2">广州</option>
-                                                <option value="3">深圳</option>
-                                                <option value="4">杭州</option>
+<!--                                                <option value="0">北京</option>-->
+<!--                                                <option value="1">上海</option>-->
+<!--                                                <option value="2">广州</option>-->
+<!--                                                <option value="3">深圳</option>-->
+<!--                                                <option value="4">杭州</option>-->
                                             </select>
                                         </div>
                                         <div class="layui-input-block" style="width: 100px;margin-left: 0">
@@ -171,8 +171,62 @@
     </div>
 
 </div>
-
+<div>
+    <input type="text" id="test2">
+    <button id="test">测试</button>
+</div>
 <script th:inline="javascript" type="text/javascript">
+    var patentType=$("#patentType");
+    $.ajax({
+        url:'/pages/back/merchant/business',//地址
+        data:{typeId:1},//无论是get或者post请求，都使用data定义请求参数
+        dataType:'json',//表示服务端返回的数据类型
+        type:'get',// 表示请求的方式 get post, 大小写不敏感
+        //表示服务器端成功返回数据, 会自动的触发function(){}方法调用， function方法的参数是成功之后返回的数据
+        // _data是已经处理好的标准的json数据，不要去调用 JSON.parse(), 底层以及处理好了
+        // contentType: false,
+        // processData: false,
+        success:function (data) {
+            console.log(data);
+            console.log(data.name);
+            // 对于获取省份来讲 _data数据是： [{}, {}, {}]
+            // provinceData(_data);
+            for (var i = 0; i <data.length ; i++) {
+                patentType.append('<option value="'+data.typeId+'">'+data.name+'</option>');
+
+            }
+        }
+    });
+
+    console.log("完成")
+
+    $("#test").click(function (data) {
+        console.log(123)
+        $.ajax({
+            url:'/pages/back/merchant/business',//地址
+            data:{typeId:1},//无论是get或者post请求，都使用data定义请求参数
+            dataType:'json',//表示服务端返回的数据类型
+            type:'get',// 表示请求的方式 get post, 大小写不敏感
+            //表示服务器端成功返回数据, 会自动的触发function(){}方法调用， function方法的参数是成功之后返回的数据
+            // _data是已经处理好的标准的json数据，不要去调用 JSON.parse(), 底层以及处理好了
+            // contentType: false,
+            // processData: false,
+            success:function (_data) {
+                console.log(_data);
+                // 对于获取省份来讲 _data数据是： [{}, {}, {}]
+                // provinceData(_data);
+                for (var i = 0; i <_data.length ; i++) {
+                    var pro = _data[i];//取到每一个省份的数据
+                    province.append('<option value="'+pro.id+'">'+pro.name+'</option>');
+                    // console.log(pro.id);
+                }
+            }
+        });
+
+        console.log("完成")
+    })
+
+
     $(function () {
         layui.use(['layer', 'form'], function () {
             let layer = layui.layer;
@@ -182,6 +236,10 @@
             });
             uploadFile();// 一定要
         });
+
+
+
+
     })
 
 </script>
