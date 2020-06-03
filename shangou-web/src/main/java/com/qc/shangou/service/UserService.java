@@ -12,7 +12,7 @@ import java.util.List;
  * Date 2020/5/29 16:12
  */
 public interface UserService extends BaseService{
-    boolean addUser();
+    UserVO addUser(UserVO user);
 
     /**
      * 用户进行登录的方法

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,6 +44,7 @@ public class UserRealm extends AuthorizingRealm {
         Object credentials = authenticationToken.getCredentials();// 获取密码（密码）：是前端传递来的，不具备真实性
         Session session = SecurityUtils.getSubject().getSession();
 
+        //把code取出来
         Object code = session.getAttribute("code");
         UserQuery query = new UserQuery();
 
@@ -69,10 +71,22 @@ public class UserRealm extends AuthorizingRealm {
             //获取发送的短信验证码
             Object loginCode = session.getAttribute("loginCode");
             if (code.equals(loginCode)){//登录成功 验证码相等
-
                 query.setPhone((String) principal);
                 UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
-
+                Object isBack = session.getAttribute("isBack");
+                if (dbUser==null){
+                    if (isBack!=null){
+                        boolean isBackFlag = (boolean)isBack;
+                        if (!isBackFlag){
+                            //注册新用户
+                            UserVO user = new UserVO();
+                            user.setNickName("请修改名字");
+                            user.setPhone(query.getPhone());
+                            user.setLastLoginTime(new Date());
+                            dbUser=userService.addUser(user);
+                        }
+                    }
+                }
 
                 session.setAttribute("userId",dbUser.getUserId());
                 session.setAttribute("nickName",dbUser.getNickName());

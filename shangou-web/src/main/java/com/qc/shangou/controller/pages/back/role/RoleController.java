@@ -53,7 +53,8 @@ public class RoleController {
     ResponseDTO addRole(Role role){
         System.out.println("add");
 
-       return ResponseDTO.get(roleDao.insertSelective(role)==1);
+//       return ResponseDTO.get(roleDao.insertSelective(role)==1);
+        return roleService.addRole(role);
     }
 
     @RequestMapping("edit")

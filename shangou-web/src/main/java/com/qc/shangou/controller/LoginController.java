@@ -94,4 +94,11 @@ public class LoginController extends BaseController{
 
     }
 
+    // 这个方法是跳转到登录页面用的,退出App
+    @RequestMapping("logoutApp")
+    String logout(){
+        SecurityUtils.getSubject().logout();
+        return "loginPage";
+    }
+
 }

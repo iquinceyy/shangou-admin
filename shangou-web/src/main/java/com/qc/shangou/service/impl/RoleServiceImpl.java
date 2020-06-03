@@ -51,6 +51,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public ResponseDTO addRole(Role role) {
+        return ResponseDTO.get(roleDao.insertSelective(role)==1);
+    }
+
+    @Override
     public PageDTO getSystemRoles() {
         List<RoleVO> roleVOS = roleDao.getSystemRoles();
 

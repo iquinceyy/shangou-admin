@@ -31,9 +31,18 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     PermissionDao permissionDao;
+
     @Override
-    public boolean addUser() {
-        return false;
+    public UserVO addUser(UserVO user) {
+        int i = userDao.insertSelective(user);
+        if (i==1){
+            UserVO u = new UserVO();
+            u.setPhone(user.getPhone());
+            u.setNickName(user.getNickName());
+            u.setUserId(user.getUserId());
+            return u;
+        }
+        return null;
     }
 
     @Override
