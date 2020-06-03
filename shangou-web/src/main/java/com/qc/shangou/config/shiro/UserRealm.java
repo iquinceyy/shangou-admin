@@ -46,7 +46,8 @@ public class UserRealm extends AuthorizingRealm {
         Object code = session.getAttribute("code");
         UserQuery query = new UserQuery();
 
-        if (StringUtils.isEmpty(code)){//常规密码验证
+        //常规密码验证
+        if (StringUtils.isEmpty(code)){
             String password = new String((char[]) credentials);// 前端传递过来的// String.valueOf((char[]) credentials)
             query.setPhone((String) principal);
             UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
@@ -67,9 +68,12 @@ public class UserRealm extends AuthorizingRealm {
         }else{//短信验证
             //获取发送的短信验证码
             Object loginCode = session.getAttribute("loginCode");
-            if (code.equals(loginCode)){//登录成功
+            if (code.equals(loginCode)){//登录成功 验证码相等
+
                 query.setPhone((String) principal);
                 UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
+
+
                 session.setAttribute("userId",dbUser.getUserId());
                 session.setAttribute("nickName",dbUser.getNickName());
                 session.setAttribute("phone",dbUser.getPhone());

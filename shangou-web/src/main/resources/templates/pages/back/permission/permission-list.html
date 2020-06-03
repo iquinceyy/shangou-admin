@@ -153,16 +153,14 @@
                 , {field: 'note', title: '备注', width: 160, edit: 'text'}
                 , {field: 'show', title: '是否展示', width: 180,templet: function (d) {// 这个d指的是本行的数据 js对象
                         let check = d.show?'checked':'';
-                        return '<div>' +
-                            '<input  lay-filter="showBtn" id="pid-'+d.permissionId+'" type="checkbox"'+check+ 'value="1" name="show" lay-skin="switch" ></div>'
-
+                        return '<div><input  lay-filter="showBtn" id="pid-'+d.permissionId+'" type="checkbox"'+check+' value="1" name="show" lay-skin="switch" ></div>'
                     }}
                 , {
                     field: '', title: '操作', templet: function (d) {// 这个d指的是本行的数据 js对象
                         // console.log(d)
                         return '<div>\n'+
-                            '            <button class="layui-btn layui-btn-xs " lay-event="showPermissions">查看权限</button>\n' +
-                            '            <button class="layui-btn layui-btn-xs " lay-event="updateData">修改</button>\n' +
+                            // '            <button class="layui-btn layui-btn-xs " lay-event="showPermissions">查看权限</button>\n' +
+                            // '            <button class="layui-btn layui-btn-xs " lay-event="updateData">修改</button>\n' +
                             '            <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteData">删除</button>\n' +
                             ' </div>'
                     }

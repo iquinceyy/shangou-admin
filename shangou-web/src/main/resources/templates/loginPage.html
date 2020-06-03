@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>闪购</title>
 </head>
 <style>
     .loginType:hover {
@@ -47,7 +47,7 @@
                             <div class="layui-form-item" style="margin-top: 10px">
                                 <label class="layui-form-label">手机号</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="phone" id="phone" placeholder="请输入密码" autocomplete="off"
+                                    <input type="text" name="phone" id="phone" placeholder="请输入密码" autocomplete="on"
                                            lay-verify="required|phone|number"
                                            class="layui-input">
                                 </div>
@@ -55,7 +55,7 @@
                             <div class="layui-form-item" id="passDiv">
                                 <label class="layui-form-label">密码</label>
                                 <div class="layui-input-block">
-                                    <input type="password" name="password" placeholder="请输入密码" autocomplete="off"
+                                    <input type="password" name="password" placeholder="请输入密码" autocomplete="on"
                                            class="layui-input">
                                 </div>
                             </div>
@@ -76,10 +76,13 @@
                                 </button>
                             </div>
                             <div class="layui-form-item">
-                                <button type="button" class="layui-btn layui-btn-primary " style="width: 100%;"
-                                        onmouseenter="this.style.border='solid orange 1px'"
-                                        onmouseleave="this.style.border='solid lightgray 1px'">申请入住
-                                </button>
+                                <a th:href="@{/pages/back/merchant/addPre}">
+                                    <button type="button" class="layui-btn layui-btn-primary " style="width: 100%;"
+                                            onmouseenter="this.style.border='solid orange 1px'"
+                                            onmouseleave="this.style.border='solid lightgray 1px'">申请入住
+                                    </button>
+                                </a>
+
                             </div>
 
                         </form>
@@ -189,7 +192,7 @@
                 $.post('/login', data.field, function (res) {
                     layer.msg(res.msg);
                     if (res.res) {
-                        window.location = '/pages/back/loginSuccess';
+                        window.location = '/pages/back/loginSuccess?isBack=1';
                     }
                 });
                 return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
@@ -212,13 +215,8 @@
                     }
                 });
             })
-
-
         });
-
-
     })
-
 </script>
 
 

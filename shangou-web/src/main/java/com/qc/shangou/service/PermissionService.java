@@ -14,7 +14,7 @@ import java.util.List;
  * Author quincey
  * Date 2020/5/30 15:52
  */
-public interface PermissionService {
+public interface PermissionService extends BaseService{
 
     PageDTO ajaxList(PermissionQuery query);
 
