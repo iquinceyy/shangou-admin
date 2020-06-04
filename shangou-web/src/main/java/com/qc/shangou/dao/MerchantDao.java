@@ -14,4 +14,6 @@ public interface MerchantDao {
     int updateByPrimaryKeySelective(Merchant record);
 
     int updateByPrimaryKey(Merchant record);
+
+    boolean selectMerchantIsOrNot(Long userId);
 }

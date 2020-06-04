@@ -32,13 +32,23 @@
     <result column="business_type" jdbcType="INTEGER" property="businessType" />
     <result column="takeaway_phone" jdbcType="VARCHAR" property="takeawayPhone" />
     <result column="is_plat_send" jdbcType="BOOLEAN" property="isPlatSend" />
+    <result column="card_user_img" jdbcType="VARCHAR" property="cardUserImg" />
+    <result column="card_guohui_img" jdbcType="VARCHAR" property="cardGuohuiImg" />
+    <result column="card_hand_img" jdbcType="VARCHAR" property="cardHandImg" />
+    <result column="business_license_img" jdbcType="VARCHAR" property="businessLicenseImg" />
+    <result column="security_permit_img" jdbcType="VARCHAR" property="securityPermitImg" />
+    <result column="other_voucher_img" jdbcType="VARCHAR" property="otherVoucherImg" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="max_delivery_area" jdbcType="DOUBLE" property="maxDeliveryArea" />
   </resultMap>
   <sql id="Base_Column_List">
     merchant_id, user_id, phone, shop_name, shop_logo, shop_detail, email, contact_name, 
     pcd, address, `location`, lng, lat, is_open, approval_status, street, title1, title2, 
     title3, min_price, business_start_time1, business_end_time1, business_start_time2, 
     business_end_time2, province, door_img, interior_img, business_type, takeaway_phone, 
-    is_plat_send
+    is_plat_send, card_user_img, card_guohui_img, card_hand_img, business_license_img, 
+    security_permit_img, other_voucher_img, create_time, update_time, max_delivery_area
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -60,7 +70,10 @@
       business_start_time1, business_end_time1, business_start_time2, 
       business_end_time2, province, door_img, 
       interior_img, business_type, takeaway_phone, 
-      is_plat_send)
+      is_plat_send, card_user_img, card_guohui_img, 
+      card_hand_img, business_license_img, security_permit_img, 
+      other_voucher_img, create_time, update_time, 
+      max_delivery_area)
     values (#{userId,jdbcType=BIGINT}, #{phone,jdbcType=CHAR}, #{shopName,jdbcType=VARCHAR}, 
       #{shopLogo,jdbcType=VARCHAR}, #{shopDetail,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{contactName,jdbcType=CHAR}, #{pcd,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
@@ -70,7 +83,10 @@
       #{businessStartTime1,jdbcType=TIME}, #{businessEndTime1,jdbcType=TIME}, #{businessStartTime2,jdbcType=TIME}, 
       #{businessEndTime2,jdbcType=TIME}, #{province,jdbcType=VARCHAR}, #{doorImg,jdbcType=VARCHAR}, 
       #{interiorImg,jdbcType=VARCHAR}, #{businessType,jdbcType=INTEGER}, #{takeawayPhone,jdbcType=VARCHAR}, 
-      #{isPlatSend,jdbcType=BOOLEAN})
+      #{isPlatSend,jdbcType=BOOLEAN}, #{cardUserImg,jdbcType=VARCHAR}, #{cardGuohuiImg,jdbcType=VARCHAR}, 
+      #{cardHandImg,jdbcType=VARCHAR}, #{businessLicenseImg,jdbcType=VARCHAR}, #{securityPermitImg,jdbcType=VARCHAR}, 
+      #{otherVoucherImg,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{maxDeliveryArea,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" keyColumn="merchant_id" keyProperty="merchantId" parameterType="com.qc.shangou.pojo.entity.Merchant" useGeneratedKeys="true">
     insert into merchant
@@ -162,6 +178,33 @@
       <if test="isPlatSend != null">
         is_plat_send,
       </if>
+      <if test="cardUserImg != null">
+        card_user_img,
+      </if>
+      <if test="cardGuohuiImg != null">
+        card_guohui_img,
+      </if>
+      <if test="cardHandImg != null">
+        card_hand_img,
+      </if>
+      <if test="businessLicenseImg != null">
+        business_license_img,
+      </if>
+      <if test="securityPermitImg != null">
+        security_permit_img,
+      </if>
+      <if test="otherVoucherImg != null">
+        other_voucher_img,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="maxDeliveryArea != null">
+        max_delivery_area,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
@@ -250,6 +293,33 @@
       </if>
       <if test="isPlatSend != null">
         #{isPlatSend,jdbcType=BOOLEAN},
+      </if>
+      <if test="cardUserImg != null">
+        #{cardUserImg,jdbcType=VARCHAR},
+      </if>
+      <if test="cardGuohuiImg != null">
+        #{cardGuohuiImg,jdbcType=VARCHAR},
+      </if>
+      <if test="cardHandImg != null">
+        #{cardHandImg,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicenseImg != null">
+        #{businessLicenseImg,jdbcType=VARCHAR},
+      </if>
+      <if test="securityPermitImg != null">
+        #{securityPermitImg,jdbcType=VARCHAR},
+      </if>
+      <if test="otherVoucherImg != null">
+        #{otherVoucherImg,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maxDeliveryArea != null">
+        #{maxDeliveryArea,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -343,6 +413,33 @@
       <if test="isPlatSend != null">
         is_plat_send = #{isPlatSend,jdbcType=BOOLEAN},
       </if>
+      <if test="cardUserImg != null">
+        card_user_img = #{cardUserImg,jdbcType=VARCHAR},
+      </if>
+      <if test="cardGuohuiImg != null">
+        card_guohui_img = #{cardGuohuiImg,jdbcType=VARCHAR},
+      </if>
+      <if test="cardHandImg != null">
+        card_hand_img = #{cardHandImg,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicenseImg != null">
+        business_license_img = #{businessLicenseImg,jdbcType=VARCHAR},
+      </if>
+      <if test="securityPermitImg != null">
+        security_permit_img = #{securityPermitImg,jdbcType=VARCHAR},
+      </if>
+      <if test="otherVoucherImg != null">
+        other_voucher_img = #{otherVoucherImg,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maxDeliveryArea != null">
+        max_delivery_area = #{maxDeliveryArea,jdbcType=DOUBLE},
+      </if>
     </set>
     where merchant_id = #{merchantId,jdbcType=BIGINT}
   </update>
@@ -376,7 +473,24 @@
       interior_img = #{interiorImg,jdbcType=VARCHAR},
       business_type = #{businessType,jdbcType=INTEGER},
       takeaway_phone = #{takeawayPhone,jdbcType=VARCHAR},
-      is_plat_send = #{isPlatSend,jdbcType=BOOLEAN}
+      is_plat_send = #{isPlatSend,jdbcType=BOOLEAN},
+      card_user_img = #{cardUserImg,jdbcType=VARCHAR},
+      card_guohui_img = #{cardGuohuiImg,jdbcType=VARCHAR},
+      card_hand_img = #{cardHandImg,jdbcType=VARCHAR},
+      business_license_img = #{businessLicenseImg,jdbcType=VARCHAR},
+      security_permit_img = #{securityPermitImg,jdbcType=VARCHAR},
+      other_voucher_img = #{otherVoucherImg,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      max_delivery_area = #{maxDeliveryArea,jdbcType=DOUBLE}
     where merchant_id = #{merchantId,jdbcType=BIGINT}
   </update>
+
+
+  <select id="selectMerchantIsOrNot" resultType="java.lang.Boolean">
+    select
+    <include refid="Base_Column_List"/>
+    from merchant where user_id = #{userId}
+  </select>
+
 </mapper>

@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * merchant
- * @author 
+ * @author
  */
 @Data
 public class Merchant implements Serializable {
@@ -160,6 +160,51 @@ public class Merchant implements Serializable {
      * 是否开启了平台配送：1或0
      */
     private Boolean isPlatSend;
+
+    /**
+     * 法人身份证正面
+     */
+    private String cardUserImg;
+
+    /**
+     * 法人身份证国徽面照片
+     */
+    private String cardGuohuiImg;
+
+    /**
+     * 法人手持身份证正面照片
+     */
+    private String cardHandImg;
+
+    /**
+     * 营业执照图片
+     */
+    private String businessLicenseImg;
+
+    /**
+     * 安全许可证图片
+     */
+    private String securityPermitImg;
+
+    /**
+     * 其他凭证
+     */
+    private String otherVoucherImg;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 最近更新时间
+     */
+    private Date updateTime;
+
+    /**
+     * 最大配送范围：单位km
+     */
+    private Double maxDeliveryArea;
 
     private static final long serialVersionUID = 1L;
 }

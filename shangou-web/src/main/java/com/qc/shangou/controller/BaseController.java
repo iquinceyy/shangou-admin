@@ -52,4 +52,12 @@ public class BaseController {
     protected Session getSession(){
         return SecurityUtils.getSubject().getSession();
     }
+
+    protected String getPhone(){
+        return (String) getSession().getAttribute("phone");
+    }
+
+    protected Long getUserId(){
+        return (Long) getSession().getAttribute("userId");
+    }
 }

@@ -4,14 +4,17 @@ function setImgInput(divImg) {
         let src = this.src;
         src = src.substring(src.indexOf('/upload/'));
         urls += src + ",";
+        ///upload/ba0b743d-81c8-489e-9013-cfb9d0612c08.jpg
         console.log(src);
     });
     urls = urls.substring(0, urls.length - 1);
     let uploadDiv = divImg.parent();
     let name = uploadDiv.attr("id");
+    //doorImg
     console.log(name);
     uploadDiv.children("input[name=" + name + "]").remove();
     divImg.before($("<input name='" + name + "' type='hidden' value='" + urls + "'/>"));
+    ///upload/ba0b743d-81c8-489e-9013-cfb9d0612c08.jpg
     console.log(urls);
 }
 
@@ -32,6 +35,7 @@ function appendImg(url, divImg) {
     });
     divImg.before(img);
     setImgInput(divImg);
+    divImg.siblings("input[type=file]")[0].value='';
 }
 function uploadFile(options) {
     let url = "/pages/back/upload/uploadFiles";
@@ -72,7 +76,7 @@ function uploadFile(options) {
                 data: formData,// 要上传的参数
                 dataType: 'json',// 服务器响应数据：json,text,html,xml
                 error: function () {//请求错误的时候，会触发此函数
-
+                    console.log("错误");
                 },
                 processData: false,//布尔值,一般都不用设置，规定通过请求发送的数据是否转换为查询字符串。默认是 true。如果此时上传的时候，有图片，这里必须设置false,
                 success: function (res) {// 请求成功，回调函数,data，指的就是服务器返回的数据
