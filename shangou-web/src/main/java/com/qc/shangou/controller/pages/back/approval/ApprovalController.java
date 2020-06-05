@@ -2,6 +2,8 @@ package com.qc.shangou.controller.pages.back.approval;
 
 import com.qc.shangou.controller.BaseController;
 import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.ApprovalLog;
 import com.qc.shangou.pojo.query.ApprovalLogQuery;
 import com.qc.shangou.service.ApprovalService;
 import org.springframework.stereotype.Controller;
@@ -21,9 +23,44 @@ public class ApprovalController extends BaseController {
     @Resource
     ApprovalService approvalService;
 
+
+
+    //商户的申请信息 分页
     @RequestMapping("getMerchantLogsById/{merchantId}")
     @ResponseBody
-    PageDTO getMerchantLogsById(Long merchantId){
-        return approvalService.getMerchantLogsById(merchantId);
+    PageDTO getMerchantLogsByQuery(ApprovalLogQuery query) {
+
+        return approvalService.getMerchantLogsByQuery(query);
     }
+
+
+    //审批商户的申请信息
+    @RequestMapping("addApprovalLog")
+    @ResponseBody
+    ResponseDTO addApprovalLog(ApprovalLog approvalLog) {
+        // 设置审核人
+        approvalLog.setApprovalUserId(getUserId());
+        approvalLog.setApprovalUserName(getSession().getAttribute("realName").toString());
+        return approvalService.addApprovalLog(approvalLog);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -20,4 +20,8 @@ public interface ApprovalLogDao {
     int updateByPrimaryKey(ApprovalLog record);
 
     List<ApprovalLogVO> getMerchantLogsById(Long merchantId);
+
+    List<ApprovalLogVO> getMerchantLogsByQuery(ApprovalLogQuery query);
+
+    Integer getMerchantLogsByQueryCount(ApprovalLogQuery query);
 }

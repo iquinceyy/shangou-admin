@@ -35,9 +35,7 @@
 </form>
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-<!--        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>-->
         <button class="layui-btn layui-btn-danger  layui-btn-sm" lay-event="delete">删除</button>
-<!--        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="dispatchPermission">分配权限</button>-->
     </div>
 </script>
 <!--分页组件-->
@@ -187,9 +185,9 @@
                     }
                 }
             ]]
-            // , toolbar: '#toolbarDemo'
+            , toolbar: '#toolbarDemo'
             ,done(){// 表格渲染完成之后，也就是图片都被渲染好了
-                // showBigImg();// 渲染大图查看，给这些图片绑定点击事件
+                showBigImg();// 渲染大图查看，给这些图片绑定点击事件
             }
         });
 
@@ -203,11 +201,22 @@
             });
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
+        //表单的监听 提交审核操作
+        form.on('submit(addApprovalLog)', function (data) {
+            console.log(data)
+            tb.reload({
+                where: data.field
+
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
 
         //监听行中工具条
         table.on('tool(merchantTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
-            console.log(data.merchantId)
+
+            // console.log(data.merchantId)
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话） --- 这个是jquery对象
             switch (layEvent) {
@@ -229,24 +238,25 @@
                         shadeClose: true,
                         content: $("#logDiv").html()
                     });
-                    // let tbody = $("#tbody");
-                    // tbody.empty();
-                    // tbody.append($("<tr >\n" +
-                    //     "                <td><img src='" + data.shopLogo + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.doorImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.interiorImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.cardUserImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.cardGuohuiImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.cardHandImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.businessLicenseImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.securityPermitImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "                <td><img src='" + data.otherVoucherImg + "' showBig style=\"height: 100px\"></td>\n" +
-                    //     "            </tr>"));
-                    //
-                    // showBigImg();
+                    let tbody = $("#tbody");
+                    tbody.empty();
+                    tbody.append($("<tr >\n" +
+                        "                <td><img src='" + data.shopLogo + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.doorImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.interiorImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.cardUserImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.cardGuohuiImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.cardHandImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.businessLicenseImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.securityPermitImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "                <td><img src='" + data.otherVoucherImg + "' showBig style=\"height: 100px\"></td>\n" +
+                        "            </tr>"));
+
+                    showBigImg();
+                    // 渲染日志表格
                     let logTs = table.render({
                         elem: '#approvalLogsTable'
-                        , url: '/pages/back/approval/getMerchantById/'+data.merchantId //服务后台的数据接口
+                        , url: '/pages/back/approval/getMerchantLogsById/ '+ data.merchantId +''//服务后台的数据接口
                         , page: true //开启分页
                         , cols: [[ //表头，这里是两个[[开头，两个]]结尾
                             // , {field: '', type: 'checkbox', title: '多选'}

@@ -1,9 +1,8 @@
 package com.qc.shangou.pojo.entity;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
+import lombok.Data;
 
 /**
  * approval_log
@@ -34,12 +33,17 @@ public class ApprovalLog implements Serializable {
     /**
      * 审核人id
      */
-    private Integer approvalUserId;
+    private Long approvalUserId;
 
     /**
      * 审核人真实名字
      */
     private String approvalUserName;
+
+    /**
+     * 商户id
+     */
+    private Long merchantId;
 
     private static final long serialVersionUID = 1L;
 }

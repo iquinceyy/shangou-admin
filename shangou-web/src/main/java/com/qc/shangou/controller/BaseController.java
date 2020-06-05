@@ -1,7 +1,6 @@
 package com.qc.shangou.controller;
 
 import com.qc.shangou.config.webmvc.WebMvcConfig;
-import org.apache.catalina.security.SecurityUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -57,7 +56,7 @@ public class BaseController {
         return (String) getSession().getAttribute("phone");
     }
 
-    protected Long getUserId(){
+    protected Long getUserId() {// 获取当前用户id
         return (Long) getSession().getAttribute("userId");
     }
 }

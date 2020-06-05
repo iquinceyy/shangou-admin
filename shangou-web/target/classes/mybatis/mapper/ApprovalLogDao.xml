@@ -102,5 +102,16 @@
     <include refid="Base_Column_List"/>
     from approval_log where merchant_id=#{merchantId}
   </select>
+    <select id="getMerchantLogsByQuery" resultType="com.qc.shangou.pojo.vo.ApprovalLogVO">
+    select
+    <include refid="Base_Column_List"/>
+      from approval_log where merchant_id=#{merchantId}
+        order by create_time desc limit #{start},#{limit}
+    </select>
+  <select id="getMerchantLogsByQueryCount" resultType="java.lang.Integer">
+    select
+      count(*)
+    from approval_log where merchant_id=#{merchantId}
+  </select>
 
 </mapper>
