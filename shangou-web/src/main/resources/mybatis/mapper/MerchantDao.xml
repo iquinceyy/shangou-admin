@@ -541,7 +541,7 @@
   </select>
 
   <delete id="deleteMerchant">
-    delete from merchant
+    delete from merchant where merchant_id in
     <foreach collection="ids" item="m" separator="," open="(" close=")">
       #{m.merchantId}
     </foreach>

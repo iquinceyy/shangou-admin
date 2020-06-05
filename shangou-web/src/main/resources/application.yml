@@ -14,6 +14,9 @@ spring:
     basename: i18n/validate  #\u8D44\u6E90 \u8BFB\u53D6\u6587\u4EF6\u6240\u5728\u76EE\u5F55
   profiles:
     active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss  #统一进行日期格式的数据返回
+    time-zone: Asia/Shanghai   # 默认时区
 mybatis:
   configuration:
     map-underscore-to-camel-case: true  # \u6570\u636E\u5E93\u4E0B\u5212\u7EBF\u8F6C\u9A7C\u5CF0

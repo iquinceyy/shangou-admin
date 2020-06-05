@@ -11,20 +11,20 @@
         height: auto;
     }
 </style>
-<body>
+<body class="layui-card-body layui-card">
 <form class="layui-form" id="queryForm" style="padding:5px 0;display: flex;align-items: center;">
     <div class="layui-form-item" style="margin: 0">
         <label class="layui-form-label" style="width: fit-content;">名称</label>
-        <input type="text" name="name"
+        <input type="text" name="name" id="permissionName"
                style="width: 200px" class="layui-input">
     </div>
     <div class="layui-form-item" style="margin: 0">
         <label class="layui-form-label" style="width: fit-content">备注</label>
-        <input type="text" name="note"
+        <input type="text" name="note" id="permissionNote"
                style="width: 200px" class="layui-input">
     </div>
     <div class="layui-form-item" style="margin: 0">
-        <button class="layui-btn" style="margin-left: 10px" lay-submit lay-filter="queryForm">查询</button>
+        <button class="layui-btn" style="margin-left: 10px" id="queryBtn" lay-submit lay-filter="queryForm">查询</button>
     </div>
 </form>
 <script type="text/html" id="toolbarDemo">

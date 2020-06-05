@@ -9,13 +9,9 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
@@ -80,18 +76,18 @@ public class LoginController extends BaseController{
     String loginSuccess(HttpServletRequest request,boolean isBack) {
 
         //
-        SavedRequest savedRequest = WebUtils.getSavedRequest(request);// shiro保存拦截之前的请求对象
-        if (savedRequest!=null){
-            String queryString = savedRequest.getQueryString();// 获取参数字符串,有被拦截的路径，就跳转回拦截之前的那个路径return "/pages/back/home";//后台管理页面
-            return "redirect:"+savedRequest.getRequestURI()+"?"+queryString;
-        }
-
         if(isBack){
             return "/pages/back/home";//后台管理页面
         }else{
-            return "pages/back/client/my-info";//客户端我的界面
+            // 不是后台登录，就是前端登录
+            SavedRequest savedRequest = WebUtils.getSavedRequest(request);// shiro保存拦截之前的请求对象
+            if (savedRequest != null) {
+                String queryString = savedRequest.getQueryString();// 获取参数字符串,有被拦截的路径，就跳转回拦截之前的那个路径
+                // "/pages/back/merchant/addPre"
+                return "redirect:" + savedRequest.getRequestURI() + "?" + queryString;
+            }
+            return "pages/back/client/my-info";// 应该跳转到客户端我的界面
         }
-
     }
 
     // 这个方法是跳转到登录页面用的,退出App

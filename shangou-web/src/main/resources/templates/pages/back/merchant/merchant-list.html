@@ -5,50 +5,93 @@
     <title>Title</title>
 </head>
 <div th:replace="fragment/js::js"></div>
+<div th:replace="fragment/map::map"></div>
 <style>
     /*修改layui表格的高度*/
     .layui-table-cell {
         height: auto;
     }
+    .layui-table-view .layui-table td, .layui-table-view .layui-table th {
+        padding: 1px 0;
+        border-top: none;
+        border-left: none;
+    }
 </style>
-<body>
+<body class="layui-card-body layui-card">
 <form class="layui-form" id="queryForm" style="padding:5px 0;display: flex;align-items: center;">
     <div class="layui-form-item" style="margin: 0">
-        <label class="layui-form-label" style="width: fit-content;">名称</label>
-        <input type="text" name="name"
+        <label class="layui-form-label" style="width: fit-content;">商铺名称</label>
+        <input type="text" name="shopName" id="merchantName"
                style="width: 200px" class="layui-input">
     </div>
     <div class="layui-form-item" style="margin: 0">
-        <label class="layui-form-label" style="width: fit-content">备注</label>
-        <input type="text" name="note"
-               style="width: 200px" class="layui-input">
+        <label class="layui-form-label" style="width: fit-content">电话</label>
+        <input type="text" name="phone" id="merchantNote"
+               style="width: 120px" class="layui-input">
     </div>
     <div class="layui-form-item" style="margin: 0">
-        <button class="layui-btn" style="margin-left: 10px" lay-submit lay-filter="queryForm">查询</button>
+        <button class="layui-btn" style="margin-left: 10px" id="queryBtn" lay-submit lay-filter="queryForm">查询</button>
     </div>
 </form>
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+<!--        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>-->
         <button class="layui-btn layui-btn-danger  layui-btn-sm" lay-event="delete">删除</button>
-        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="dispatchPermission">分配权限</button>
+<!--        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="dispatchPermission">分配权限</button>-->
     </div>
 </script>
 <!--分页组件-->
-<table id="merchantTable" lay-filter="merchantTable"></table>
-<script type="text/html" id="systemRolesTableDiv">
-    <div style="padding: 5px 20px 20px 20px">
-        <table id="systemRolesTable" lay-filter="systemRolesTable"></table>
-        <button class="layui-btn  layui-btn-sm" id="addPermissionToRole">审批</button>
-        <button class="layui-btn layui-btn-danger layui-btn-sm" id="removePermissionFromRole">将权限从角色移除</button>
+<script type="text/html" id="addLogDiv">
+    <form class="layui-form" style="display: flex">
+        <div style="display: flex;align-items: center">
+            <label>审核意见</label>
+            <input type="text" name="note" placeholder="请输入审核意见"
+                   style="width: 300px" class="layui-input">
+        </div>
+        <div style="display: flex;margin-left: 10px;align-items: center">
+            <label>审核结果</label>
+            <div class="layui-input-block" style="width: 140px;margin-left: 0">
+                <select style="width: 100px" name="res" lay-verify="required">
+                    <option value="">请选择审核结果</option>
+                    <option>审核通过</option>
+                    <option>需重新提交</option>
+                    <option>暂不合作</option>
+                    <option>审核中</option>
+                </select>
+            </div>
+        </div>
+        <button style="margin-left: 10px;" class="layui-btn layui-btn-danger" lay-submit lay-filter="addApprovalLog">
+            添加审核意见
+        </button>
+    </form>
+</script>
+<script type="text/html" id="logDiv">
+    <div id="voucherDiv" style="padding: 10px">
+        <table class="layui-table" id="voucherTable" lay-filter="voucherTable">
+            <thead>
+            <tr>
+                <th>店铺Logo</th>
+                <th>门脸照</th>
+                <th>室内照</th>
+                <th>营业执照</th>
+                <th>法人身份证头像面</th>
+                <th>法人身份证国徽面</th>
+                <th>法人手持身份证</th>
+                <th>食品安全许可证</th>
+                <th>其他证件</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+        <table id="approvalLogsTable" lay-filter="approvalLogsTable"></table>
     </div>
 </script>
+<table id="merchantTable" lay-filter="merchantTable"></table>
 
 <script th:inline="javascript" type="text/javascript">
 
     //批量删除
-    // checkMerchants
-    //merchant
     function deleteMerchants(checkMerchants,layer,tb) {
         //只把id取出来
         let arr=[];
@@ -81,8 +124,7 @@
         let table = layui.table;// 分页组件
         let form = layui.form;// 分页组件
         var addOpen;
-        var editOpen;
-        let showPermissionOpen;
+        var logOpen;
 
         //第一个实例
         let tb = table.render({// 渲染表格
@@ -92,60 +134,142 @@
             , cols: [[ //表头，这里是两个[[开头，两个]]结尾
                 {field: '', type: 'checkbox', title: '多选'}
                 , {field: 'shopName', title: '商铺名称', width: 160, edit: 'text'}
-                , {field: 'contactName', title: '联系人姓名', width: 160, edit: 'text'}
-                , {field: 'approvalStatus', title: '审批状态', width: 160, edit: 'text'}
-                , {field: 'shopDetail', title: '商铺详情', width: 80, edit: 'text', sort: true}
+                , {field: 'contactName', title: '联系人姓名', width: 100, edit: 'text'}
+                , {field: 'isOpen', title: '营业状态', width: 100}
+                , {field: 'approvalStatus', title: '审批状态', width: 100,templet:function (d) {
+                        let color =   d.approvalStatus=='审核中'? 'red':
+                                    d.approvalStatus=='审核通过'?'green':
+                                    d.approvalStatus=='暂不合作'?'orange':
+                                    d.approvalStatus=='需重新提交'?'blue':''
+                        let img='<div><span style="color: '+color+'" >'+d.approvalStatus+'</span></div>';
+                        return img;
+                    }}
+                , {field: 'shopDetail', title: '商铺详情', width: 160, edit: 'text', sort: true}
                 , {field: 'createTime', title: '创建时间', width: 160, edit: 'text'}
-                , {field: 'businessType', title: '主要经营类目id', width: 160, edit: 'text'}
+                , {field: 'businessType', title: '主要经营类目id', width: 80, edit: 'text'}
                 , {field: 'maxDeliveryArea', title: '最大配送范围 Km', width: 160, edit: 'text'}
                 , {field: 'address', title: '详细的街道地址', width: 160, edit: 'text'}
                 , {field: 'location', title: '用户输入的坐标', width: 160, edit: 'text'}
-                , {field: 'merchantId', title: '商家id', width: 160, edit: 'text'}
+                , {field: 'shopLogo', title: '店铺LOGO', width: 80, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        let img = '<div>' +
+                            '<img showBig style="width: 50px;height: 50px;border-radius: 5px" src=" ' + d.shopLogo + ' "></div>'
+                        return img;
+                    }
+                }
+                , {field: 'merchantId', title: '商家id', width: 80, edit: 'text'}
+                , {field: 'doorImg', title: '门脸照' , templet: function (d) {// 这个d指的是本行的数据 js对象
+                        let img='<div><img showBig style="width: 50px;height: 50px;border-radius: 5px" src=" '+d.doorImg+' "></div>'
+                        return img;
+                    }
+                }
+                , {field: 'location', title: '坐标', width: 80, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        let img='<div><button class="layui-btn layui-btn-xs" lay-event="showMerchantMap">查看</button></div>'
+                        return img;
+                    }
+                }
+                , {field: 'street', title: '街道',}
+                , {field: 'email', title: '邮箱', width: 160,}
+                , {field: 'pcd', title: '省市区', width: 200,}
+                , {field: 'address', title: '地址', width: 200,}
                 , {
-                    field: '', title: '操作', templet: function (d) {// 这个d指的是本行的数据 js对象
+                    field: '', title: '操作',width: 160, templet: function (d) {// 这个d指的是本行的数据 js对象
                         // console.log(d)
                         return '<div>\n'+
-                            // '            <button class="layui-btn layui-btn-xs " lay-event="updateData">修改</button>\n' +
+                            '            <button class="layui-btn layui-btn-xs " lay-event="validateData">审核</button>\n' +
                             '            <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteData">删除</button>\n' +
                             ' </div>'
                     }
                 }
             ]]
-            , toolbar: '#toolbarDemo'
+            // , toolbar: '#toolbarDemo'
+            ,done(){// 表格渲染完成之后，也就是图片都被渲染好了
+                // showBigImg();// 渲染大图查看，给这些图片绑定点击事件
+            }
         });
 
 
         //查询
         form.on('submit(queryForm)', function (data) {
+            console.log(data)
             tb.reload({
                 where: data.field
+
             });
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
 
         //监听行中工具条
-        table.on('tool(permissionTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(merchantTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
+            console.log(data.merchantId)
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话） --- 这个是jquery对象
-            if (layEvent=="deleteData") {
-                let permissions = [];
-                permissions.push(data);
-                layer.confirm('确定删除吗?', function (index) {
-                    // 第一步，拿到所有选中的行的角色id
-                    deletePermissions(permissions,layer,tb);//批量删除角色
-                    layer.close(index);
+            switch (layEvent) {
+                case 'deleteData':
+                    let merchant = [];
+                    merchant.push(data);
+                    layer.confirm('确定删除吗?', function (index) {
+                        // 第一步，拿到所有选中的行的角色id
+                        deleteMerchants(merchant,layer,tb);//批量删除角色
+                        layer.close(index);
                 });
+                case 'validateData':
+                    logOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+                        type: 1,
+                        offset: '10px',
+                        area: '80%',
+                        title: "审核日志记录",
+                        shadeClose: true,
+                        content: $("#logDiv").html()
+                    });
+                    // let tbody = $("#tbody");
+                    // tbody.empty();
+                    // tbody.append($("<tr >\n" +
+                    //     "                <td><img src='" + data.shopLogo + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.doorImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.interiorImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.cardUserImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.cardGuohuiImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.cardHandImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.businessLicenseImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.securityPermitImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "                <td><img src='" + data.otherVoucherImg + "' showBig style=\"height: 100px\"></td>\n" +
+                    //     "            </tr>"));
+                    //
+                    // showBigImg();
+                    let logTs = table.render({
+                        elem: '#approvalLogsTable'
+                        , url: '/pages/back/approval/getMerchantById/'+data.merchantId //服务后台的数据接口
+                        , page: true //开启分页
+                        , cols: [[ //表头，这里是两个[[开头，两个]]结尾
+                            // , {field: '', type: 'checkbox', title: '多选'}
+                            , {field: 'createTime', title: '时间', width: 80, edit: 'text'}
+                            , {field: 'note', title: '备注', width: 80, edit: 'text'}
+                            , {field: 'res', title: '审核结果', width: 80, templet:function (d) {
+                                    let color =   d.res=='审核中'? 'red':
+                                        d.res=='审核通过'?'green':
+                                            d.res=='暂不合作'?'orange':
+                                                d.res=='需重新提交'?'blue':''
+                                    let img='<div><span style="color: '+color+'" >'+d.approvalStatus+'</span></div>';
+                                    return img;
+                                }
+                                }
+                            , {field: 'approvalUserName', title: '审核人', width: 80, edit: 'text', sort: true}
+                            , {field: 'approvalUserId', title: '审核人ID', width: 80, edit: 'text'}
+                            ]]
+                        , toolbar: '#addLogDiv'
+                    })
+                    break;
             }
         });
 
         //编辑
-        table.on('edit(permissionTable)', function(obj){
+        table.on('edit(merchantTable)', function(obj){
             console.log(obj.value); //得到修改后的值
             console.log(obj.field); //当前编辑的字段名
             console.log(obj.data); //所在行的所有相关数据
             let p ={};
-            p.permissionId = obj.data.permissionId;
+            p.merchantId = obj.data.merchantId;
             p[obj.field]= obj.value;
             $.post('pages/back/permission/edit',p,function (res) {
                 layer.msg(res.msg);
@@ -162,84 +286,15 @@
                     layer.confirm('您确定操作吗?', function (index) {
                         // 第一步，拿到所有选中的行的权限id
                         let checkMerchants = checkStatus.data;//获取选中行的数据
-                        deletePermissions(checkMerchants, layer, tb);// 批量删除权限
+                        deleteMerchants(checkMerchants, layer, tb);// 批量删除权限
                         layer.close(index);
-                    });
-                    break;
-                case 'dispatchPermission':
-                    layer.msg('分配权限');
-                    // 第一步：获取选中的权限
-                    let checkS = table.checkStatus('merchantTable'); //idTest 即为基础参数 id 对应的值
-                    let checkPermissions = checkS.data;//获取选中行的数据
-                    console.log(checkPermissions);
-                    console.log("分配权限");
-
-                    //第一个实例
-                    let systemRolesOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
-                        type: 1,
-                        offset: '10px',
-                        area: '60%',
-                        title: "系统级角色列表",
-                        content: $("#systemRolesTableDiv").html()
-                    });
-                    let systemRolesTable = table.render({// 渲染表格
-                        elem: '#systemRolesTable'
-                        , url: '/pages/back/role/getSystemRoles' //服务后台的数据接口
-                        , cols: [[ //表头，这里是两个[[开头，两个]]结尾
-                            {field: '', type: 'radio', title: '单选'}
-                            , {field: 'name', title: '角色名称', width: 160}
-                            , {field: 'flag', title: '标记', width: 160}
-                            , {field: 'note', title: '备注', width: 260}
-                        ]]
-                    });
-                    // 第二步：拿到勾选的角色
-                    let r;
-                    table.on('radio(systemRolesTable)', function (obj) {
-                        let role = obj.data;
-                        r = {};
-                        r.roleId = role.roleId;
-                        let ps = [];// 权限数组
-                        checkPermissions.forEach((p) => {
-                            let permission = {};
-                            permission.permissionId = p.permissionId;
-                            ps.push(permission)
-                        });
-                        r.permissionVOS = ps;
-                    });
-                    $("#addPermissionToRole").click(function () {
-                        // 第一步：拿到所有勾选的权限
-                        if (checkPermissions.length === 0) {
-                            layer.msg('请选中一些权限，先');
-                            return;
-                        }
-                        if (r == undefined) {
-                            layer.msg('请选中一个角色，先');
-                            return;
-                        }
-                        $.post('/pages/back/permission/addPermissionToRole', {str: JSON.stringify(r)}, function (res) {// 如果要传递数组还是要用application/json
-                            layer.msg(res.msg);
-                        });
-                    });
-                    $("#removePermissionFromRole").click(function () {
-                        // 第一步：拿到所有勾选的权限
-                        if (checkPermissions.length === 0) {
-                            layer.msg('请选中一些权限，先');
-                            return;
-                        }
-                        if (r == undefined) {
-                            layer.msg('请选中一个角色，先');
-                            return;
-                        }
-                        $.post('/pages/back/permission/removePermissionFromRole', {str: JSON.stringify(r)}, function (res) {// 如果要传递数组还是要用application/json
-                            layer.msg(res.msg);
-                        });
                     });
                     break;
             }
         });
-        onInput($("#permissionName"));
-        onInput($("#permissionNote"));
-        table.on('checkbox(permissionTable)', function (obj) {
+        onInput($("#merchantName"));
+        onInput($("#merchantNote"));
+        table.on('checkbox(merchantTable)', function (obj) {
             console.log(obj); //当前是否选中状态
             console.log(obj.checked); //当前是否选中状态
             console.log(obj.data); //选中行的相关数据
