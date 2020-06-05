@@ -60,7 +60,7 @@
     delete from merchant
     where merchant_id = #{merchantId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="merchant_id" keyProperty="merchantId" parameterType="com.qc.shangou.pojo.entity.Merchant" useGeneratedKeys="true">
+    <insert id="insert" keyColumn="merchant_id" keyProperty="merchantId" parameterType="com.qc.shangou.pojo.entity.Merchant" useGeneratedKeys="true">
     insert into merchant (user_id, phone, shop_name, 
       shop_logo, shop_detail, email, 
       contact_name, pcd, address, 
@@ -493,4 +493,57 @@
     from merchant where user_id = #{userId}
   </select>
 
+
+    <select id="ajaxList" resultType="com.qc.shangou.pojo.vo.MerchantVO">
+        select
+        <include refid="Base_Column_List"/>
+      from merchant
+      <where>
+        <if test="shopName != null and shopName!=''">
+          and shop_name like CONCAT('%',#{shopName},'%')
+        </if>
+        <if test="phone != null">
+          and phone like CONCAT('%',#{phone},'%')
+        </if>
+        <if test="contactName != null and contactName!=''">
+          and contact_name like CONCAT('%',#{contactName},'%')
+        </if>
+        <if test="takeawayPhone != null">
+          and takeaway_phone like CONCAT('%',#{takeawayPhone},'%')
+        </if>
+        <if test="createTime != null">
+          and create_time like CONCAT('%',#{createTime},'%')
+        </if>
+      </where>
+      limit #{start},#{limit}
+    </select>
+  <select id="ajaxListCount" resultType="java.lang.Integer">
+    select
+    count(*)
+    from merchant
+    <where>
+      <if test="shopName != null and shopName!=''">
+        and shop_name like CONCAT('%',#{shopName},'%')
+      </if>
+      <if test="phone != null">
+        and phone like CONCAT('%',#{phone},'%')
+      </if>
+      <if test="contactName != null and contactName!=''">
+        and contact_name like CONCAT('%',#{contactName},'%')
+      </if>
+      <if test="takeawayPhone != null">
+        and takeaway_phone like CONCAT('%',#{takeawayPhone},'%')
+      </if>
+      <if test="createTime != null">
+        and create_time like CONCAT('%',#{createTime},'%')
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteMerchant">
+    delete from merchant
+    <foreach collection="ids" item="m" separator="," open="(" close=")">
+      #{m.merchantId}
+    </foreach>
+  </delete>
 </mapper>

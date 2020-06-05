@@ -112,6 +112,7 @@ public class UserRealm extends AuthorizingRealm {
 
         // 设置权限
         return new SimpleAuthenticationInfo(authenticationToken.getPrincipal(), authenticationToken.getCredentials(), "userRealm");
+//        return new SimpleAuthenticationInfo("18875150682", "123456", "userRealm");
     }
 
     /**

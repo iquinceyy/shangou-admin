@@ -172,7 +172,8 @@
 <script th:inline="javascript" type="text/javascript">
     $(function () {
 
-        let validateArr = ['doorImg', 'interiorImg', 'cardUserImg', 'cardGuohuiImg', 'cardHandImg', 'businessLicenseImg', 'securityPermitImg'];
+        let validateArr = ['doorImg'];
+        //, 'interiorImg', 'cardUserImg', 'cardGuohuiImg', 'cardHandImg', 'businessLicenseImg', 'securityPermitImg'
         layui.use(['layer', 'form'], function () {
             let layer = layui.layer;
             let form = layui.form;
@@ -180,29 +181,41 @@
             form.on('submit(commit)', function (data) {
                 console.log(data);
                 let flag = true;// 默认是通过
-                //不认证
-                // for (let x = 0; x < validateArr.length; x++) {
-                //     let i = validateArr[x];
-                //     if (data.field[i] == undefined || data.field[i] == '') {
-                //         layer.msg($("#" + i).parent().prev().text() + "需要上传");
-                //         flag = false;// 有一个没上传就不能通过
-                //         break;
-                //     }
-                // }
-                //
-                // if (!flag) {// 如果上传文件没用通过，那么久直接返回false,就不要继续后面的操作了
-                //     return false;
-                // }
+
+                for (let x = 0; x < validateArr.length; x++) {
+                    let i = validateArr[x];
+                    if (data.field[i] == undefined || data.field[i] == '') {
+                        layer.msg($("#" + i).parent().prev().text() + "需要上传");
+                        flag = false;// 有一个没上传就不能通过
+                        break;
+                    }
+                }
+
+                if (!flag) {// 如果上传文件没用通过，那么久直接返回false,就不要继续后面的操作了
+                    return false;
+                }
                 // 验证通过，开始执行入驻申请，因为图片全部都已经转换成了地址的字符串，所以实际上这里已经不涉及图片上传了，那么可以使用简单的post请求即可
                 console.log(data.field);
                 console.log(1);
 
                 $.post('/pages/back/merchant/add', data.field, function (res) {
-                    console.log(2);
-                    layer.msg(res);
-                    if (res.res) {// 这里如果申请成功了，那么应该跳转到提示商户审核中的页面去，静态界面
+                    let g=res.res//true
+                    if (res.res){
+                        layer.msg(res.msg)
                         window.location='/pages/back/merchant/approvalStatus'
                     }
+                    // if (g){
+                    //     console.log(22222)
+                    //     window.location='/pages/back/merchant/approvalStatus'
+                    // }
+
+                    // if (res.res){
+                    //     console.log("申请成功，跳转")
+                    // }
+                    // window.location='/pages/back/merchant/approvalStatus'
+                    // if (res.msg) {// 这里如果申请成功了，那么应该跳转到提示商户审核中的页面去，静态界面
+                    //     window.location='/pages/back/merchant/approvalStatus'
+                    // }
                 });
 
 

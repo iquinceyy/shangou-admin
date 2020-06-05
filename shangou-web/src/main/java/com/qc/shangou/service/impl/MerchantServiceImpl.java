@@ -2,15 +2,22 @@ package com.qc.shangou.service.impl;
 
 import com.qc.shangou.dao.MerchantDao;
 import com.qc.shangou.pojo.consts.enums.ApprovalEnum;
+import com.qc.shangou.pojo.dto.PageDTO;
 import com.qc.shangou.pojo.dto.ResponseDTO;
 import com.qc.shangou.pojo.entity.Merchant;
+import com.qc.shangou.pojo.query.MerchantQuery;
+import com.qc.shangou.pojo.vo.MerchantVO;
+import com.qc.shangou.pojo.vo.PermissionVO;
+import com.qc.shangou.pojo.vo.RoleVO;
 import com.qc.shangou.service.ImgCacheService;
 import com.qc.shangou.service.MerchantService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Author quincey
@@ -23,6 +30,13 @@ public class MerchantServiceImpl implements MerchantService {
     MerchantDao merchantDao;
     @Resource
     ImgCacheService imgCacheService;
+
+    @Override
+    public PageDTO ajaxList(MerchantQuery query) {
+        List<MerchantVO> merchantVOS = merchantDao.ajaxList(query);
+        Integer count = merchantDao.ajaxListCount(query);
+        return PageDTO.setPageData(count,merchantVOS);
+    }
 
     @Override
 
@@ -41,8 +55,8 @@ public class MerchantServiceImpl implements MerchantService {
         merchant.setApprovalStatus(ApprovalEnum.审核中.toString());
 
         if (merchantDao.insertSelective(merchant) == 1) {
-//            imgCacheService.deleteImgCache(merchant);//清除缓存图片
-            return ResponseDTO.ok("申请成功！");
+            imgCacheService.deleteImgCache(merchant);//清除缓存图片
+            return ResponseDTO.ok("申请成功");
         }
 
         return ResponseDTO.fail("申请失败");
@@ -57,4 +71,10 @@ public class MerchantServiceImpl implements MerchantService {
         }
         return true;
     }
+
+    @Override
+    public ResponseDTO deleteMerchantByMerchantId(List<Merchant> merchant) {
+        return ResponseDTO.get(merchantDao.deleteMerchant(merchant)==merchant.size());
+    }
+
 }
