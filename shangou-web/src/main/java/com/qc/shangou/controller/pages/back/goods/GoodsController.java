@@ -45,4 +45,8 @@ public class GoodsController {
     ResponseDTO addGoods(Goods goods) {
         return goodsService.addGoods(goods);
     }
+
+
+
+
 }
