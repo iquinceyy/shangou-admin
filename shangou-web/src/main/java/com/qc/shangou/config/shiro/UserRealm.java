@@ -64,6 +64,7 @@ public class UserRealm extends AuthorizingRealm {
             session.setAttribute("userId", dbUser.getUserId());
             session.setAttribute("nickName", dbUser.getNickName());
             session.setAttribute("phone", dbUser.getPhone());
+            session.setAttribute("realName", dbUser.getRealName());
             // 设置角色
             List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
             session.setAttribute("hisRoles",roleVOS);
@@ -91,6 +92,7 @@ public class UserRealm extends AuthorizingRealm {
                 session.setAttribute("userId",dbUser.getUserId());
                 session.setAttribute("nickName",dbUser.getNickName());
                 session.setAttribute("phone",dbUser.getPhone());
+                session.setAttribute("realName",dbUser.getRealName());
                 //设置角色
                 List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
                 session.setAttribute("hisRoles",roleVOS);

@@ -1,5 +1,6 @@
 package com.qc.shangou.pojo.vo;
 
+import com.qc.shangou.pojo.entity.ApprovalLog;
 import lombok.Data;
 
 /**

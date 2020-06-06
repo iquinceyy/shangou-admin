@@ -11,4 +11,15 @@ import lombok.Data;
 public class UserQuery extends PageQuery {
     private String password;
     private String phone;
+
+    /**
+     * 用户昵称
+     */
+    private String nickName;
+
+    /**
+     * 真名字
+     */
+    private String realName;
+
 }

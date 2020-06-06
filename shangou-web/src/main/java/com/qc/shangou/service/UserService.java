@@ -1,5 +1,8 @@
 package com.qc.shangou.service;
 
+import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.User;
 import com.qc.shangou.pojo.query.UserQuery;
 import com.qc.shangou.pojo.vo.PermissionVO;
 import com.qc.shangou.pojo.vo.RoleVO;
@@ -30,4 +33,13 @@ public interface UserService extends BaseService{
 
     // 检测用户是否存在
     boolean checkPhoneExist(String phone);
+
+    //查询用户列表
+    PageDTO ajaxUserList(UserQuery query);
+
+    ResponseDTO addAjxaUser(User user);
+
+    ResponseDTO editUser(User user);
+
+    ResponseDTO deleteUser(User user);
 }

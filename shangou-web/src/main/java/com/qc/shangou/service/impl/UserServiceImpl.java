@@ -3,11 +3,15 @@ package com.qc.shangou.service.impl;
 import com.qc.shangou.dao.PermissionDao;
 import com.qc.shangou.dao.RoleDao;
 import com.qc.shangou.dao.UserDao;
+import com.qc.shangou.pojo.dto.PageDTO;
+import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.User;
 import com.qc.shangou.pojo.query.UserQuery;
 import com.qc.shangou.pojo.vo.PermissionVO;
 import com.qc.shangou.pojo.vo.RoleVO;
 import com.qc.shangou.pojo.vo.UserVO;
 import com.qc.shangou.service.UserService;
+import com.qc.shangou.util.password.PasswordUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -97,5 +101,31 @@ public class UserServiceImpl implements UserService {
     public boolean checkPhoneExist(String phone) {
 
         return userDao.selectUserByPhone(phone) != null;
+    }
+
+    @Override
+    public PageDTO ajaxUserList(UserQuery query) {
+
+        List<UserVO> userVOS = userDao.ajaxUserList(query);
+        Integer count = userDao.ajaxUserCount(query);
+        return PageDTO.setPageData(count,userVOS);
+    }
+
+    @Override
+    public ResponseDTO addAjxaUser(User user) {
+        //对密码加密
+        String newPwd = PasswordUtil.encodePassword(user.getPassword());
+        user.setPassword(newPwd);
+        return ResponseDTO.get(userDao.insertSelective(user)==1);
+    }
+
+    @Override
+    public ResponseDTO editUser(User user) {
+        return null;
+    }
+
+    @Override
+    public ResponseDTO deleteUser(User user) {
+        return null;
     }
 }

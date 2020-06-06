@@ -145,5 +145,38 @@
         from user where phone=#{phone}
     </select>
 
+    <select id="ajaxUserList" resultType="com.qc.shangou.pojo.vo.UserVO">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        <where>
+            <if test="nickName != null and nickName!=''">
+               and nick_name like concat(%,#{nickName},%)
+            </if>
+            <if test="realName != null and realName!=''">
+                and real_name like concat(%,#{realName},%)
+            </if>
+            <if test="phone != null and phone!=''">
+                and phone like concat(%,#{phone},%)
+            </if>
+        </where>
+        limit #{start},#{limit}
+    </select>
+    <select id="ajaxUserCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from user
+        <where>
+            <if test="nickName != null and nickName!=''">
+                and nick_name like concat(%,#{nickName},%)
+            </if>
+            <if test="realName != null and realName!=''">
+                and real_name like concat(%,#{realName},%)
+            </if>
+            <if test="phone != null and phone!=''">
+                and phone like concat(%,#{phone},%)
+            </if>
+        </where>
+    </select>
 
 </mapper>

@@ -16,29 +16,67 @@
         border-top: none;
         border-left: none;
     }
+    #queryForm > div {
+        margin: 10px 5px;
+    }
 </style>
 <body class="layui-card-body layui-card">
-<form class="layui-form" id="queryForm" style="padding:5px 0;display: flex;align-items: center;">
-    <div class="layui-form-item" style="margin: 0">
-        <label class="layui-form-label" style="width: fit-content;">商铺名称</label>
-        <input type="text" name="shopName" id="merchantName"
-               style="width: 200px" class="layui-input">
+<!--查询表单-->
+<form class="layui-form" style="display: flex;align-items: center;flex-wrap: wrap"
+      id="queryForm">
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content">商户号</label>
+        <input type="text" name="merchantId" id="merchantId"
+               style="width: 120px" class="layui-input">
     </div>
-    <div class="layui-form-item" style="margin: 0">
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content">联系人</label>
+        <input type="text" name="contactName" id="contactName"
+               style="width: 120px" class="layui-input">
+    </div>
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content">地址</label>
+        <input type="text" name="address" id="address"
+               style="width: 120px" class="layui-input">
+    </div>
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content;">名称</label>
+        <input type="text" name="shopName" id="merchantName"
+               style="width: 120px" class="layui-input">
+    </div>
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
         <label class="layui-form-label" style="width: fit-content">电话</label>
         <input type="text" name="phone" id="merchantNote"
                style="width: 120px" class="layui-input">
+    </div>
+
+    <div class="layui-form-item" style="margin: 0;border: solid lightgray 0.1px;margin-left: 10px">
+        <label class="layui-form-label" style="width: fit-content">营业状态</label>
+        <input type="radio" name="isOpen" lay-filter="isOpenFilter" value="" title="所有" checked>
+        <input type="radio" name="isOpen" lay-filter="isOpenFilter" value="1" title="营业中">
+        <input type="radio" name="isOpen" lay-filter="isOpenFilter" value="0" title="休息中">
+    </div>
+    <div class="layui-form-item" style="margin: 0;border: solid lightgray 0.1px;margin-left: 10px">
+        <label class="layui-form-label" style="width: fit-content">审核状态</label>
+        <input type="radio" name="approvalStatus" lay-filter="approvalStatus" value="" title="所有" checked>
+        <input type="radio" name="approvalStatus" lay-filter="approvalStatus" value="审核中" title="审核中">
+        <input type="radio" name="approvalStatus" lay-filter="approvalStatus" value="审核通过" title="审核通过">
+        <input type="radio" name="approvalStatus" lay-filter="approvalStatus" value="需重新提交" title="需重新提交">
+        <input type="radio" name="approvalStatus" lay-filter="approvalStatus" value="暂不合作" title="暂不合作">
     </div>
     <div class="layui-form-item" style="margin: 0">
         <button class="layui-btn" style="margin-left: 10px" id="queryBtn" lay-submit lay-filter="queryForm">查询</button>
     </div>
 </form>
+
+<!--自定义的toolbar-->
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-danger  layui-btn-sm" lay-event="delete">删除</button>
     </div>
 </script>
-<!--分页组件-->
+
+<!--审核表单-->
 <script type="text/html" id="addLogDiv">
     <form class="layui-form" style="display: flex">
         <div style="display: flex;align-items: center">
@@ -63,6 +101,7 @@
         </button>
     </form>
 </script>
+<!--审核日志表-->
 <script type="text/html" id="logDiv">
     <div id="voucherDiv" style="padding: 10px">
         <table class="layui-table" id="voucherTable" lay-filter="voucherTable">
@@ -85,6 +124,8 @@
         <table id="approvalLogsTable" lay-filter="approvalLogsTable"></table>
     </div>
 </script>
+
+<!--商户表-->
 <table id="merchantTable" lay-filter="merchantTable"></table>
 
 <script th:inline="javascript" type="text/javascript">
@@ -117,6 +158,8 @@
         })
     }
 
+    //接收商户id
+    let addApprovalLogMerchantId;
     layui.use(['layer', 'table', 'form'], function () {
         let layer = layui.layer;// 弹出层
         let table = layui.table;// 分页组件
@@ -133,7 +176,7 @@
                 {field: '', type: 'checkbox', title: '多选'}
                 ,{
                     field: 'merchantId', title: '商户号', width: '160', templet: function (d) {
-                        let div = "<div><button class='layui-btn layui-btn-xs layui-btn-danger' lay-event='approvalBtn'>审核</button><span>" + d.merchantId + "</span></div>"
+                        let div = "<div><button class='layui-btn layui-btn-xs layui-btn-danger' lay-event='validateData'>审核</button><span>" + d.merchantId + "</span></div>"
                         return div;
                     }
                 }
@@ -191,27 +234,6 @@
             }
         });
 
-
-        //查询
-        form.on('submit(queryForm)', function (data) {
-            console.log(data)
-            tb.reload({
-                where: data.field
-
-            });
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        });
-        //表单的监听 提交审核操作
-        form.on('submit(addApprovalLog)', function (data) {
-            console.log(data)
-            tb.reload({
-                where: data.field
-
-            });
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        });
-
-
         //监听行中工具条
         table.on('tool(merchantTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
@@ -227,9 +249,12 @@
                         // 第一步，拿到所有选中的行的角色id
                         deleteMerchants(merchant,layer,tb);//批量删除角色
                         layer.close(index);
-                });
-                // case 'validateData':
-                case 'approvalBtn':
+                    });
+                case 'validateData':
+
+                    //获取商户id 给日志修改时插入数据
+                    addApprovalLogMerchantId=data.merchantId;
+                    // console.log(addApprovalLogMerchantId)
                     logOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
                         type: 1,
                         offset: '10px',
@@ -251,29 +276,30 @@
                         "                <td><img src='" + data.securityPermitImg + "' showBig style=\"height: 100px\"></td>\n" +
                         "                <td><img src='" + data.otherVoucherImg + "' showBig style=\"height: 100px\"></td>\n" +
                         "            </tr>"));
-
                     showBigImg();
-                    // 渲染日志表格
-                    let logTs = table.render({
+
+                    // 渲染审核日志表格
+                    let logTab = table.render({
                         elem: '#approvalLogsTable'
                         , url: '/pages/back/approval/getMerchantLogsById/ '+ data.merchantId +''//服务后台的数据接口
                         , page: true //开启分页
+                        ,limit:3
                         , cols: [[ //表头，这里是两个[[开头，两个]]结尾
                             // , {field: '', type: 'checkbox', title: '多选'}
-                            , {field: 'createTime', title: '时间', width: 80, edit: 'text'}
-                            , {field: 'note', title: '备注', width: 80, edit: 'text'}
-                            , {field: 'res', title: '审核结果', width: 80, templet:function (d) {
-                                    let color =   d.res=='审核中'? 'red':
+                            , {field: 'createTime', title: '时间', width: 160}
+                            , {field: 'res', title: '审核结果', width: 120, templet:function (d) {
+                                    let color = d.res=='审核中'? 'red':
                                         d.res=='审核通过'?'green':
                                             d.res=='暂不合作'?'orange':
                                                 d.res=='需重新提交'?'blue':''
-                                    let img='<div><span style="color: '+color+'" >'+d.approvalStatus+'</span></div>';
+                                    let img='<div><span style="color: '+color+'" >'+d.res+'</span></div>';
                                     return img;
                                 }
-                                }
-                            , {field: 'approvalUserName', title: '审核人', width: 80, edit: 'text', sort: true}
-                            , {field: 'approvalUserId', title: '审核人ID', width: 80, edit: 'text'}
-                            ]]
+                            }
+                            , {field: 'approvalUserName', title: '审核人', width: 80 }
+                            , {field: 'approvalUserId', title: '审核人ID', width: 120 }
+                            , {field: 'note', title: '备注', width: 160}
+                        ]]
                         , toolbar: '#addLogDiv'
                     })
                     break;
@@ -288,8 +314,9 @@
             let p ={};
             p.merchantId = obj.data.merchantId;
             p[obj.field]= obj.value;
-            $.post('pages/back/permission/edit',p,function (res) {
+            $.post('pages/back/merchant/edit',p,function (res) {
                 layer.msg(res.msg);
+                //修改成功，重载表格
             })
         })
 
@@ -309,14 +336,50 @@
                     break;
             }
         });
-        onInput($("#merchantName"));
-        onInput($("#merchantNote"));
-        table.on('checkbox(merchantTable)', function (obj) {
-            console.log(obj); //当前是否选中状态
-            console.log(obj.checked); //当前是否选中状态
-            console.log(obj.data); //选中行的相关数据
-            console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+
+        //查询
+        form.on('submit(queryForm)', function (data) {
+            console.log(data)
+            tb.reload({
+                where: data.field
+
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
+
+        //表单的监听 提交审核操作
+        form.on('submit(addApprovalLog)', function (data) {
+            // console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            // console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            // console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            //全部表单字段
+            console.log(addApprovalLogMerchantId);
+            let datas = data.field;
+            datas.merchantId=addApprovalLogMerchantId
+            console.log(datas.merchantId);
+            $.post('/pages/back/approval/addApprovalLog',datas,function (res) {
+                layer.msg(res.msg);
+                if (res.res){
+                    layer.close(logOpen);
+                    logTab.reload();
+                    tb.reload();
+                }
+            })
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //监听搜索框营业状态 的自动点击
+        form.on('radio(isOpen)', function (data) {
+            $("#queryBtn").click();
+        });
+
+        //监听搜索框的审核状态 自动点击
+        form.on('radio(approvalStatus)', function (data) {
+            $("#queryBtn").click();
+        });
+
+        //监听搜索框的input
+        onInput($("#queryForm input"));
 
     });
     function onInput(jObj) {

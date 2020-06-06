@@ -13,9 +13,12 @@ import java.util.Date;
 @Data
 public class MerchantQuery extends PageQuery {
 
-    private Date createTime;
-    private String takeawayPhone;
-    private String contactName;
-    private String shopName;
-    private String phone;
+    private Long userId, merchantId;// 用户id或者是商户号
+    private String shopName;//  店铺名称模糊查询
+    private String phone;   //  手机号模糊
+    private String contactName;   //  联系人模糊查询
+    private String address;   //  地址模糊
+    private String approvalStatus;   //  审核状态：等值查询
+    private Boolean isOpen;   //  营业状态：等值查询
+    private Boolean isPlatSend;   //  平台配送状态：等值查询
 }

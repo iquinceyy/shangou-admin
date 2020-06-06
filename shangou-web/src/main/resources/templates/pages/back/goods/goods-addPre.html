@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<h2>商品增加列表</h2>
 <div th:replace="fragment/js::js"></div>
 <style>
     /*修改layui表格的高度*/
@@ -12,11 +13,11 @@
     }
 </style>
 <body>
-<h1>[[${goodsId}]]</h1>
+
 <!--分页组件-->
 <table id="goodsTable" lay-filter="goodsTable"></table>
-<script type="text/html" id="addForm">
-    <form class="layui-form" style="padding: 20px">
+<!--<script type="text/html" id="addForm">-->
+    <form class="layui-form" style="padding: 20px" >
         <div class="layui-form-item">
             <label class="layui-form-label">商品名称</label>
             <div class="layui-input-block">
@@ -69,7 +70,7 @@
             </div>
         </div>
     </form>
-</script>
+<!--</script>-->
 
 <script type="text/html" id="editForm">
     <form class="layui-form" style="padding: 20px">
@@ -106,11 +107,8 @@
                              style="width: 80px;height: 80px;border-radius: 10px;border: lightgray 1px dashed;"/>
                         <i class="layui-icon layui-icon-addition"
                            style="position: absolute;left: 35px;top: 35px;z-index: -1"></i>
-
                     </div>
                 </div>
-
-
             </div>
         </div>
         <div class="layui-form-item">
@@ -139,25 +137,25 @@
         let $ = layui.$;// 使用jquery
 
         //第一个实例
-        let tb = table.render({// 渲染表格
-            elem: '#goodsTable'
-            , url: '/pages/back/goods/ajaxList' //服务后台的数据接口
-            , page: true //开启分页
-            , cols: [[ //表头，这里是两个[[开头，两个]]结尾
-                , {field: '', type: 'checkbox', title: '多选'}
-                , {field: 'title', title: '商品名称', width: 160}
-                , {field: 'oldPrice', title: '原价', width: 80, edit: 'text'}
-                , {field: 'nowPrice', title: '现价', width: 80, sort: true, edit: 'text'}
-                , {field: 'createTime', title: '创建时间', width: 160}
-                , {field: 'updateTime', title: '更新时间', width: 160}
-                , {field: 'userUser', title: '更新人', width: 160}
-                , {field: 'sold', title: '已售数量', width: 160}
-                , {field: 'score', title: '商品评分', width: 160}
-                , {field: 'merchantId', title: '商户id', width: 160}
-                ,
-            ]]
-            , toolbar: 'default'
-        });
+        // let tb = table.render({// 渲染表格
+        //     elem: '#goodsTable'
+        //     , url: '/pages/back/goods/ajaxList' //服务后台的数据接口
+        //     , page: true //开启分页
+        //     , cols: [[ //表头，这里是两个[[开头，两个]]结尾
+        //         , {field: '', type: 'checkbox', title: '多选'}
+        //         , {field: 'title', title: '商品名称', width: 160}
+        //         , {field: 'oldPrice', title: '原价', width: 80, edit: 'text'}
+        //         , {field: 'nowPrice', title: '现价', width: 80, sort: true, edit: 'text'}
+        //         , {field: 'createTime', title: '创建时间', width: 160}
+        //         , {field: 'updateTime', title: '更新时间', width: 160}
+        //         , {field: 'userUser', title: '更新人', width: 160}
+        //         , {field: 'sold', title: '已售数量', width: 160}
+        //         , {field: 'score', title: '商品评分', width: 160}
+        //         , {field: 'merchantId', title: '商户id', width: 160}
+        //         ,
+        //     ]]
+        //     , toolbar: 'default'
+        // });
         let addOpen;
         let editOpen;
 

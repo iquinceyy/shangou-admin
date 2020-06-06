@@ -499,20 +499,32 @@
         <include refid="Base_Column_List"/>
       from merchant
       <where>
-        <if test="shopName != null and shopName!=''">
-          and shop_name like CONCAT('%',#{shopName},'%')
+        <if test="merchantId != null">
+          and merchant_id = #{merchantId}
         </if>
-        <if test="phone != null">
-          and phone like CONCAT('%',#{phone},'%')
+        <if test="userId != null">
+          and user_id = #{userId}
+        </if>
+        <if test="isOpen != null ">
+          and is_open=#{isOpen}
+        </if>
+        <if test="isPlatSend != null ">
+          and is_plat_send=#{isPlatSend}
+        </if>
+        <if test="shopName != null and shopName!=''">
+          and shop_name like CONCAT('%', #{shopName},'%')
+        </if>
+        <if test="phone != null and phone!=''">
+          and phone like CONCAT('%', #{phone},'%')
         </if>
         <if test="contactName != null and contactName!=''">
-          and contact_name like CONCAT('%',#{contactName},'%')
+          and contact_name like CONCAT('%', #{contactName},'%')
         </if>
-        <if test="takeawayPhone != null">
-          and takeaway_phone like CONCAT('%',#{takeawayPhone},'%')
+        <if test="address != null and address!=''">
+          and address like CONCAT('%', #{address},'%')
         </if>
-        <if test="createTime != null">
-          and create_time like CONCAT('%',#{createTime},'%')
+        <if test="approvalStatus != null and approvalStatus!=''">
+          and approval_status=#{approvalStatus}
         </if>
       </where>
       limit #{start},#{limit}
@@ -522,21 +534,34 @@
     count(*)
     from merchant
     <where>
-      <if test="shopName != null and shopName!=''">
-        and shop_name like CONCAT('%',#{shopName},'%')
+      <if test="merchantId != null">
+        and merchant_id = #{merchantId}
       </if>
-      <if test="phone != null">
-        and phone like CONCAT('%',#{phone},'%')
+      <if test="userId != null">
+        and user_id = #{userId}
+      </if>
+      <if test="isOpen != null ">
+        and is_open=#{isOpen}
+      </if>
+      <if test="isPlatSend != null ">
+        and is_plat_send=#{isPlatSend}
+      </if>
+      <if test="shopName != null and shopName!=''">
+        and shop_name like CONCAT('%', #{shopName},'%')
+      </if>
+      <if test="phone != null and phone!=''">
+        and phone like CONCAT('%', #{phone},'%')
       </if>
       <if test="contactName != null and contactName!=''">
-        and contact_name like CONCAT('%',#{contactName},'%')
+        and contact_name like CONCAT('%', #{contactName},'%')
       </if>
-      <if test="takeawayPhone != null">
-        and takeaway_phone like CONCAT('%',#{takeawayPhone},'%')
+      <if test="address != null and address!=''">
+        and address like CONCAT('%', #{address},'%')
       </if>
-      <if test="createTime != null">
-        and create_time like CONCAT('%',#{createTime},'%')
+      <if test="approvalStatus != null and approvalStatus!=''">
+        and approval_status=#{approvalStatus}
       </if>
+
     </where>
   </select>
 
