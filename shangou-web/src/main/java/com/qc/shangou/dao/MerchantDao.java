@@ -28,4 +28,8 @@ public interface MerchantDao {
     Integer ajaxListCount(MerchantQuery query);
 
     int deleteMerchant(@Param("ids") List<Merchant> merchant);
+
+    Merchant seleleMerchantIdIdByPhone(String phone);
+
+    MerchantVO selectByUserId(Long userId);
 }

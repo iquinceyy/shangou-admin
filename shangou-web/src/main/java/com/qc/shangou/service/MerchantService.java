@@ -5,6 +5,7 @@ import com.qc.shangou.pojo.dto.ResponseDTO;
 import com.qc.shangou.pojo.entity.Merchant;
 import com.qc.shangou.pojo.entity.Permission;
 import com.qc.shangou.pojo.query.MerchantQuery;
+import com.qc.shangou.pojo.vo.MerchantVO;
 
 import java.util.List;
 
@@ -23,4 +24,9 @@ public interface MerchantService {
 
     //批量删除
     ResponseDTO deleteMerchantByMerchantId(List<Merchant> merchant);
+
+    //增加商品  需要MerchantIdId
+    Merchant seleleMerchantIdIdByPhone(String phone);
+
+    Long selectMerchantIdByUserId(Long userId);
 }

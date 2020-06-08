@@ -2,6 +2,7 @@ package com.qc.shangou.service;
 
 import com.qc.shangou.pojo.vo.PermissionVO;
 import com.qc.shangou.pojo.vo.RoleVO;
+import com.qc.shangou.util.spring.SpringUtil;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -72,5 +73,11 @@ public interface BaseService {
             }
         }
         return treeSet;
+    }
+
+    //删除缓存图片
+    default boolean deleteImgCache(Object object){
+        ImgCacheService bean = SpringUtil.getBean(ImgCacheService.class);
+        return bean.deleteImgCache(object);
     }
 }

@@ -1,5 +1,6 @@
 package com.qc.shangou.pojo.dto;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -41,6 +42,16 @@ public class ResponseDTO implements Serializable {
      * 返回的数据
      */
     private Object data;
+
+
+    // 定义了一个函数。泛型含糊
+    public <T> T getObject(Class<T> cls) {
+
+        if (getData() != null) {
+            return JSON.parseObject(JSON.toJSONString(getData()), cls);
+        }
+        return null;
+    }
 
     /**
      * 返回为成功的构造函数

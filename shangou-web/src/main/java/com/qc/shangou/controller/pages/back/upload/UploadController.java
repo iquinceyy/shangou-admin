@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Author quincey
@@ -50,6 +52,26 @@ public class UploadController extends BaseController {
             buffer.delete(buffer.length() - 1, buffer.length());
         }
         return ResponseDTO.ok("上传成功", buffer.toString());
+    }
+
+    //单独给wangeditor写个方法
+    //上传富文本
+    @RequestMapping("wangEditorUploadFiles")
+    @ResponseBody
+    Map<String,Object> wangEditorUploadFiles(MultipartHttpServletRequest request){
+
+        ResponseDTO res = this.uploadFiles(request);
+
+        if (res.getRes()){//true
+            String object = res.getObject(String.class);
+            if (StringUtils.isEmpty(object)){
+                Map<String,Object> map =new HashMap<>();
+                map.put("errno",0);
+                map.put("data",object.split(","));
+                return map;
+            }
+        }
+        return null;
     }
 }
 

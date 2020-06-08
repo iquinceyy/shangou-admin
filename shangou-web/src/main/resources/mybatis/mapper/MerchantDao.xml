@@ -563,9 +563,21 @@
       </if>
 
     </where>
-  </select>
 
-  <delete id="deleteMerchant">
+
+  </select>
+    <select id="seleleMerchantIdIdByPhone" resultType="com.qc.shangou.pojo.vo.MerchantVO">
+      select
+      <include refid="Base_Column_List"/>
+      from merchant where phone = #{phone}
+    </select>
+    <select id="selectByUserId" resultType="com.qc.shangou.pojo.vo.MerchantVO">
+      select
+      <include refid="Base_Column_List"/>
+      from merchant where user_id = #{userId}
+    </select>
+
+    <delete id="deleteMerchant">
     delete from merchant where merchant_id in
     <foreach collection="ids" item="m" separator="," open="(" close=")">
       #{m.merchantId}

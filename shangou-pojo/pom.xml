@@ -26,6 +26,14 @@
             <artifactId>hutool-core</artifactId>
             <version>5.3.5</version>
         </dependency>
+
+        <!-- 用阿里巴巴的FastJSON -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.62</version>
+        </dependency>
+
     </dependencies>
 
 </project>

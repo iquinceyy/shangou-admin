@@ -77,4 +77,18 @@ public class MerchantServiceImpl implements MerchantService {
         return ResponseDTO.get(merchantDao.deleteMerchant(merchant)==merchant.size());
     }
 
+    @Override
+    public Merchant seleleMerchantIdIdByPhone(String phone) {
+        return merchantDao.seleleMerchantIdIdByPhone(phone);
+    }
+
+    @Override
+    public Long selectMerchantIdByUserId(Long userId) {
+        MerchantVO m = merchantDao.selectByUserId(userId);
+        if (m != null) {
+            return m.getMerchantId();
+        }
+        return null;
+    }
+
 }
