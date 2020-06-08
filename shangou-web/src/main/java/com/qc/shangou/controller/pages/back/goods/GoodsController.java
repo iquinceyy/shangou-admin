@@ -18,6 +18,7 @@ import com.qc.shangou.service.MerchantService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -39,34 +40,67 @@ public class GoodsController extends BaseController {
     MerchantService merchantService;
     @Resource
     GoodsTypeService goodsTypeService;
-    //商品列表url
+
+    //商品列表url 平台对商品进行列表查看   4
     @RequestMapping("list")
     String list(){
         return "pages/back/goods/goods-list";
     }
 
-    //增加商品列表url
+    // 商户对自己的商品进行列表查看
+    @RequestMapping("merchantlist")
+    String merchantlist(Model model){
+        List<GoodsTypeVO> merchantGoodsTypes = goodsTypeService.getMerchantGoodsTypes(getMerchantId());
+        model.addAttribute("goodsTypes",merchantGoodsTypes);
+        return "pages/back/goods/goods-merchantlist";
+    }
+
+    //增加商品列表url      2
     @RequestMapping("addPre")
     String addPre(Model model){
-        //查询商品分类和类型
+        //查询商品分类和类型 传入前端 渲染选择
         List<GoodsTypeVO> goodsTypeVOS = goodsTypeService.getMerchantGoodsTypes(getMerchantId());
         model.addAttribute("goodsTypes", goodsTypeVOS);
         return "pages/back/goods/goods-addPre";
     }
 
+    //平台获取商品列表
     @RequestMapping("ajaxList")
     @ResponseBody
     PageDTO ajaxList(GoodsQuery query) {
         return goodsService.ajaxList(query);
     }
 
-    @RequestMapping("ajaxList/{merchantId}")
+    //商户获取商品列表
+    @RequestMapping("ajaxListMerchantGoods")
     @ResponseBody
-    PageDTO ajaxListByMerchantId(@PathVariable GoodsQuery query) {
+    PageDTO ajaxListByMerchantId(GoodsQuery query) {
+        //根据商户id查询商品
+        query.setMerchantId(getMerchantId());
         return goodsService.ajaxList(query);
     }
 
+    //修改   1
+    @RequestMapping("editPre/{goodsId}")
+    String editPre(@RequestBody Long goodsId,Model model){
+        List<GoodsTypeVO> merchantGoodsTypes = goodsTypeService.getMerchantGoodsTypes(getMerchantId());
+        model.addAttribute("goodsTypes",merchantGoodsTypes);
+        Goods goods = goodsService.getById(goodsId);
+        model.addAttribute("goods",goods);
+        return "pages/back/goods/goods-editPre";
+    }
 
+
+    @RequestMapping("edit}")
+    @ResponseBody
+    ResponseDTO editGoods(Goods goods) {
+        //设置最后一次的修改人
+        goods.setUpdateUser(getUserId());
+        return goodsService.editGoods(goods);
+    }
+
+
+    //添加  3
     @RequestMapping("add")
     @ResponseBody
     ResponseDTO addGoods(Goods goods) {
@@ -86,4 +120,10 @@ public class GoodsController extends BaseController {
         return goodsService.addGoods(goods);
     }
 
+    //根据goodsId删除
+    @RequestMapping("delete/{goodsId}")
+    @ResponseBody
+    ResponseDTO deleteGoods(Goods goods) {
+        return goodsService.deleteGoods(goods);
+    }
 }

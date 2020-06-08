@@ -4,6 +4,7 @@ import com.qc.shangou.pojo.dto.PageDTO;
 import com.qc.shangou.pojo.dto.ResponseDTO;
 import com.qc.shangou.pojo.entity.Goods;
 import com.qc.shangou.pojo.query.GoodsQuery;
+import com.qc.shangou.pojo.vo.GoodsTypeVO;
 
 
 import java.util.List;
@@ -20,4 +21,9 @@ public interface GoodsService extends BaseService {
     //添加商品
     ResponseDTO addGoods(Goods goods);
 
+    Goods getById(Long goodsId);
+
+    ResponseDTO deleteGoods(Goods goods);
+
+    ResponseDTO editGoods(Goods goods);
 }

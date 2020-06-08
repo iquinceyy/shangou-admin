@@ -29,6 +29,7 @@ public class GoodsServiceImpl implements GoodsService {
     @Resource
     MerchantDao merchantDao;
 
+
     @Override
     public PageDTO ajaxList(GoodsQuery query) {
         List<GoodsVO> goodsVOS = goodsDao.ajaxGoodsList(query);
@@ -53,6 +54,22 @@ public class GoodsServiceImpl implements GoodsService {
         //删除图片
         deleteImgCache(goods);
         return ResponseDTO.get(goodsDao.insertSelective(goods)==1);
+    }
+
+    @Override
+    public Goods getById(Long goodsId) {
+        return goodsDao.selectByPrimaryKey(goodsId);
+    }
+
+    @Override
+    public ResponseDTO deleteGoods(Goods goods) {
+        return ResponseDTO.get(goodsDao.deleteByPrimaryKey(goods.getGoodsId())==1);
+    }
+
+    @Override
+    public ResponseDTO editGoods(Goods goods) {
+
+        return ResponseDTO.get(goodsDao.updateByPrimaryKeySelective(goods)==1);
     }
 
 }
