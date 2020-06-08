@@ -19,8 +19,8 @@
 </style>
 <body>
 <!--分页组件-->
-<div  style="" >
-    <form class="layui-form" style="padding: 20px" id="addForm" >
+<
+    <form class="layui-form" style="padding: 20px"  >
         <div style="display: flex">
             <div class="layui-form-item">
                 <label class="layui-form-label">商品名称</label>
@@ -77,6 +77,25 @@
 
         <div style="display: flex">
             <div class="layui-form-item">
+                <label class="layui-form-label">排序编号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" id="sort" placeholder="排序编号"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">库存</label>
+                <div class="layui-input-block">
+                    <input type="text" name="stock" id="stock" placeholder="库存"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+
+        <div style="display: flex">
+            <div class="layui-form-item">
                 <label class="layui-form-label">好评次数</label>
                 <div class="layui-input-block">
                     <input type="text" name="praise" id="praise" placeholder="好评次数"
@@ -114,10 +133,9 @@
             <div style="display: flex">
                 <span class="layui-form-label">商品类型</span>
                 <div class="layui-input-block" style="width: 100px;margin-left: 0">
-                    <select name="goodsTypes" id="goodsTypeId" >
+                    <select name="goodsTypeId" class="layui-select" lay-verify="required">
                         <option th:each="t:${goodsTypes}" th:value="${t.goodsTypeId}"
-                        th:text="${t.typeName}">
-                        </option>
+                                th:text="${t.typeName}"></option>
                     </select>
                 </div>
 <!--                <div style="display: flex">-->
@@ -186,7 +204,6 @@
             </div>
         </div>
     </form>
-</div>
 
 <script th:inline="javascript" type="text/javascript">
 
@@ -243,7 +260,7 @@
                     success: function (res) {// 请求成功，回调函数,data，指的就是服务器返回的数据
                         if (res.res) {
                             layer.msg(res.msg);
-                            tb.reload();// 添加成功数据之后要重载表格
+                            // tb.reload();// 添加成功数据之后要重载表格
                             if (addOpen != undefined) {
                                 layer.close(addOpen);
                             }
