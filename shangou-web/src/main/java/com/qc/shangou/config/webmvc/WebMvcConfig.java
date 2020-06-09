@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
+import java.io.File;
 
 /**
  * Author quincey
@@ -19,6 +20,11 @@ import javax.annotation.Resource;
 public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     ShangouInterceptor shangouInterceptor;
+
+    public static boolean deleteFile(String url) {
+        File f = new File(getUploadPath() + url);
+        return f.delete();
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

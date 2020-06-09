@@ -19,191 +19,190 @@
 </style>
 <body>
 <!--分页组件-->
-<
-    <form class="layui-form" style="padding: 20px"  >
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">商品名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="title" id="title" placeholder="请输入商品名称"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">商品副标题</label>
-                <div class="layui-input-block">
-                    <input type="text" name="subTitle" id="subTitle" placeholder="请输入商品名称"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-        </div>
-
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">商品原价</label>
-                <div class="layui-input-block">
-                    <input type="text" name="oldPrice" id="oldPrice" placeholder="商品原价"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">商品现价</label>
-                <div class="layui-input-block">
-                    <input type="text" name="nowPrice" id="nowPrice" placeholder="商品现价"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-        </div>
-
-
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">重量</label>
-                <div class="layui-input-block">
-                    <input type="text" name="weight" id="weight" placeholder="重量"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">口味</label>
-                <div class="layui-input-block">
-                    <input type="text" name="taste" id="taste" placeholder="口味"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-        </div>
-
-
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">排序编号</label>
-                <div class="layui-input-block">
-                    <input type="text" name="sort" id="sort" placeholder="排序编号"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">库存</label>
-                <div class="layui-input-block">
-                    <input type="text" name="stock" id="stock" placeholder="库存"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-        </div>
-
-
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">好评次数</label>
-                <div class="layui-input-block">
-                    <input type="text" name="praise" id="praise" placeholder="好评次数"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">已售</label>
-                <div class="layui-input-block">
-                    <input type="text" name="sold" id="sold" placeholder="已售"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-        </div>
-
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">城市区域</label>
-                <div class="layui-input-block">
-                    <input type="text" cityPicker name="pcd"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">打包费</label>
-                <div class="layui-input-block">
-                    <input type="text" name="packagingFee" id="packagingFee" placeholder="打包费"
-                           style="width: 200px" class="layui-input">
-                </div>
-            </div>
-        </div>
-
+<form class="layui-form" style="padding: 20px">
+    <div style="display: flex">
         <div class="layui-form-item">
-            <div style="display: flex">
-                <span class="layui-form-label">商品类型</span>
-                <div class="layui-input-block" style="width: 100px;margin-left: 0">
-                    <select name="goodsTypeId" class="layui-select" lay-verify="required">
-                        <option th:each="t:${goodsTypes}" th:value="${t.goodsTypeId}"
-                                th:text="${t.typeName}"></option>
-                    </select>
-                </div>
-<!--                <div style="display: flex">-->
-<!--                    <span class="layui-form-label">经营类型</span>-->
-<!--                    <select name="businessTypeId" id="businessTypeId" >-->
-<!--                        <option value="1"></option>-->
-<!--                    </select>-->
-<!--                </div>-->
-            </div>
-        </div>
-
-        <div style="display: flex">
-            <div class="layui-form-item">
-                <label class="layui-form-label">是否展示</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="show" value="1" id="show" checked lay-skin="switch"
-                           lay-filter="">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">是否在售</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="onSale" id="onSale" value="1" checked lay-skin="switch">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">是否外卖</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="takeaway" id="takeaway" value="1" checked lay-skin="switch">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">是否团购</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="isCoupon" id="isCoupon" value="1" checked lay-skin="switch">
-                </div>
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">商品主图</label>
+            <label class="layui-form-label">商品名称</label>
             <div class="layui-input-block">
-                <div lh-upload id="pic"></div>
+                <input type="text" name="title" id="title" placeholder="请输入商品名称"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品副标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="subTitle" id="subTitle" placeholder="请输入商品名称"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex">
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品原价</label>
+            <div class="layui-input-block">
+                <input type="text" name="oldPrice" id="oldPrice" placeholder="商品原价"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品现价</label>
+            <div class="layui-input-block">
+                <input type="text" name="nowPrice" id="nowPrice" placeholder="商品现价"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <div style="display: flex">
+        <div class="layui-form-item">
+            <label class="layui-form-label">重量</label>
+            <div class="layui-input-block">
+                <input type="text" name="weight" id="weight" placeholder="重量"
+                       style="width: 200px" class="layui-input">
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">商品轮播图</label>
-            <div>
-                <div lh-upload id="imgs"></div>
+            <label class="layui-form-label">口味</label>
+            <div class="layui-input-block">
+                <input type="text" name="taste" id="taste" placeholder="口味"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <div style="display: flex">
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="sort" id="sort" placeholder="排序编号"
+                       style="width: 200px" class="layui-input">
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <label class="layui-form-label">库存</label>
+            <div class="layui-input-block">
+                <input type="text" name="stock" id="stock" placeholder="库存"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <div style="display: flex">
+        <div class="layui-form-item">
+            <label class="layui-form-label">好评次数</label>
+            <div class="layui-input-block">
+                <input type="text" name="praise" id="praise" placeholder="好评次数"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">已售</label>
+            <div class="layui-input-block">
+                <input type="text" name="sold" id="sold" placeholder="已售"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex">
+        <div class="layui-form-item">
+            <label class="layui-form-label">城市区域</label>
+            <div class="layui-input-block">
+                <input type="text" cityPicker name="pcd"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">打包费</label>
+            <div class="layui-input-block">
+                <input type="text" name="packagingFee" id="packagingFee" placeholder="打包费"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div style="display: flex">
+            <span class="layui-form-label">商品类型</span>
+            <div class="layui-input-block" style="width: 100px;margin-left: 0">
+                <select name="goodsTypeId" class="layui-select" lay-verify="required">
+                    <option th:each="t:${goodsTypes}" th:value="${t.goodsTypeId}"
+                            th:text="${t.typeName}"></option>
+                </select>
+            </div>
+            <!--                <div style="display: flex">-->
+            <!--                    <span class="layui-form-label">经营类型</span>-->
+            <!--                    <select name="businessTypeId" id="businessTypeId" >-->
+            <!--                        <option value="1"></option>-->
+            <!--                    </select>-->
+            <!--                </div>-->
+        </div>
+    </div>
+
+    <div style="display: flex">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否展示</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="show" value="1" id="show" checked lay-skin="switch"
+                       lay-filter="">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否在售</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="onSale" id="onSale" value="1" checked lay-skin="switch">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否外卖</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="takeaway" id="takeaway" value="1" checked lay-skin="switch">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否团购</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="isCoupon" id="isCoupon" value="1" checked lay-skin="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品主图</label>
+        <div class="layui-input-block">
+            <div lh-upload id="pic"></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品轮播图</label>
         <div>
-            <label>商品详情</label>
+            <div lh-upload id="imgs"></div>
         </div>
-        <div id="wangEdit" style="width: 80%">
-        </div>
+    </div>
 
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="addForm">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
+    <div>
+        <label>商品详情</label>
+    </div>
+    <div id="wangEdit" style="width: 80%">
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="addForm">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
-    </form>
+    </div>
+</form>
 
 <script th:inline="javascript" type="text/javascript">
 
@@ -275,8 +274,6 @@
 
 
     })
-
-
 
 </script>
 </body>

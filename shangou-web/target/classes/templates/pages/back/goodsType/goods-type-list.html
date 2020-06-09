@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="fragment/js::js"></div>
+</head>
+<style>
+    /*修改layui表格的高度*/
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+
+<body>
+<h1>[[${goodsTypeId}]]</h1>
+<table id="goodsTypeTable" lay-filter="goodsTypeTable"></table>
+<script type="text/html" id="addForm">
+    <form class="layui-form" style="padding: 20px">
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="typeName" placeholder="请输入商品类型名称"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="sort" placeholder="请输入商品类型原价" lay-verify="number"
+                       style="width: 200px" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="commit">添加</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/javascript" th:inline="javascript">
+
+    layui.use(['layer', 'table', 'form'], function(){
+        let layer = layui.layer;// 弹出层
+        let table = layui.table;// 分页组件
+        let form = layui.form;// 分页组件
+        let addOpen;
+        //第一个实例
+        let tb = table.render({
+            elem: '#goodsTypeTable'
+            ,height: 312
+            ,url: '/pages/back/goodsType/ajaxList' //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+                {field: '', type: 'checkbox', title: '多选'}
+                , {field: 'goodsTypeId', title: '类型id', width: 80}
+                , {field: 'typeName', title: '类型名称', width: 160, edit: 'text'}
+                , {field: 'sort', title: '排序编号', width: 120, sort: true, edit: 'text'}
+                ,{field: '', title: '操作', width: 120, templet:function (data) {//data本行数据
+                        return '<div><button class="layui-btn layui-btn-xs layui-btn-danger" ' +
+                            'lay-event="deleteData">删除</button></div>\n'
+                    }}
+            ]]
+            , toolbar: 'default'
+        });
+
+        //表单提交
+        form.on('submit(commit)',function (data) {
+            $.post('/pages/back/goodsType/add',data.field,function (res) {
+                layer.msg(res.msg);
+                tb.reload();
+                if (res.res){
+                    layer.close(addOpen);
+                }
+            });
+            return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //监听表中
+        table.on('tool(goodsTypeTable)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var d = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case 'deleteData':
+                    layer.confirm('您确定操作吗?', function (index) {
+                        $.post('/pages/back/goodsType/delete/'+d.goodsTypeId, function (res) {
+                            layer.msg(res.msg);
+                            tb.reload()
+                        });
+                        layer.close(index);
+                    });
+                    break;
+            }
+        });
+
+        //监听表中行工具
+        table.on('edit(goodsTypeTable)', function (obj) {
+            console.log(obj.value); //得到修改后的值
+            console.log(obj.field); //当前编辑的字段名
+            console.log(obj.data); //所在行的所有相关数据
+            let p = {};
+            let data = obj.data;
+            p.goodsTypeId = data.goodsTypeId;
+            p[obj.field]=obj.value;
+            $.post('/pages/back/goodsType/edit/',p,function (res) {
+                layer.msg(res.msg);
+                tb.reload();
+            })
+        });
+
+
+        //监听表头工具
+        table.on('toolbar(goodsTypeTable)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var d = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case 'add':
+                    addOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+                        type: 1,
+                        title: "商品类型类型添加",
+                        content: $("#addForm").html()
+                    });
+                    form.render();
+                    break;
+            }
+        });
+
+    });
+
+</script>
+</body>
+</html>

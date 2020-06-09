@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragment/js::js"></div>
+<style>
+    /*修改layui表格的高度*/
+    /*overflow: visible !important;防止select被遮挡*/
+    .layui-table-cell {
+        height: 50px;
+        overflow: visible !important;
+    }
+
+    thead .layui-table-cell {
+        height: auto;
+    }
+</style>
+<script type="text/html" id="goodsDetail">
+    <div id="goodsDetailDiv"></div>
+</script>
+<body class="layui-card-body layui-card">
+<form class="layui-form" style="display: flex;align-items: center;flex-wrap: wrap"
+      id="queryForm">
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content">名称</label>
+        <input type="text" name="title" id="title"
+               style="width: 120px" class="layui-input">
+    </div>
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content">最低价</label>
+        <input type="text" name="minPrice" id="minPrice"
+               style="width: 120px" class="layui-input">
+    </div>
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content;">最高价</label>
+        <input type="text" name="maxPrice" id="maxPrice"
+               style="width: 120px" class="layui-input">
+    </div>
+
+    <div style="display: flex;align-items: center;flex-wrap: nowrap">
+        <label class="layui-form-label" style="width: fit-content;">商品类型</label>
+        <div class="layui-input-block" style="margin: 0;width: 140px">
+            <select name="goodsTypeId" lay-filter="selectGoodsType" class="layui-select" >
+                <option value=""></option>
+                <option th:each="t:${goodsTypes}" th:value="${t.goodsTypeId}"
+                        th:text="${t.typeName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin: 5px;border: solid lightgray 0.1px;margin-left: 10px">
+        <label class="layui-form-label" style="width: fit-content">是否在售</label>
+        <input type="radio" name="onSale" lay-filter="onSale" value="" title="所有" checked>
+        <input type="radio" name="onSale" lay-filter="onSale" value="1" title="在售">
+        <input type="radio" name="onSale" lay-filter="onSale" value="0" title="停售">
+    </div>
+    <div class="layui-form-item" style="margin: 5px;border: solid lightgray 0.1px;margin-left: 10px">
+        <label class="layui-form-label" style="width: fit-content">是否团购</label>
+        <input type="radio" name="isCoupon" lay-filter="isCoupon" value="" title="所有" checked>
+        <input type="radio" name="isCoupon" lay-filter="isCoupon" value="1" title="团购">
+        <input type="radio" name="isCoupon" lay-filter="isCoupon" value="0" title="外卖">
+    </div>
+    <div class="layui-form-item" style="margin: 0">
+        <button class="layui-btn" style="margin-left: 10px" id="queryBtn" lay-submit lay-filter="queryForm">查询</button>
+    </div>
+</form>
+
+<!--分页组件-->
+<table id="goodsTable" lay-filter="goodsTable"></table>
+<script th:inline="javascript" type="text/javascript">
+    let types = [[${goodsTypes}]];// 在js中接收后台传递的参数
+
+    layui.use(['layer', 'table', 'form'], function () {
+        // 我再js代码里边如何获取控制器传递过来的参数呢？
+        let layer = layui.layer;// 弹出层
+        let table = layui.table;// 分页组件
+        let form = layui.form;// 分页组件
+        //第一个实例
+        let tb = table.render({// 渲染表格
+            elem: '#goodsTable'
+            , url: '/pages/back/goods/ajaxListMerchantGoods' //服务后台的数据接口
+            , page: true //开启分页
+            , cols: [[ //表头，这里是两个[[开头，两个]]结尾
+                {field: '', type: 'checkbox', title: '多选'}
+                , {
+                    field: 'sort', title: '商品类型', width: 160, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        // console.log(d)
+                        let div = $("<div></div>");
+                        let s = $("<select lay-filter='selectType'  class='layui-select' ></select>");
+                        types.forEach(t => {
+                            let selected = t.goodsTypeId == d.goodsTypeId ? 'selected' : '';
+                            let op = $("<option value='" + d.goodsId + '-' + t.goodsTypeId + "' " + selected + " >" + t.typeName + "</option>")
+                            s.append(op)
+                        });
+                        div.append(s);
+                        return div.html();
+                    }
+                }
+                , {field: 'sort', title: '排序编号', width: 80, edit: 'text'}
+                , {field: 'title', title: '商品名称', width: 160, edit: 'text'}
+                , {field: 'subTitle', title: '副标题', width: 100, edit: 'text'}
+                , {
+                    field: '', title: '商品图片', width: 100, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        // console.log(d)
+                        return '<div><img showBig style="width: 50px;height: 50px;border-radius: 3px" src=' + d.pic + '/></div>'
+                    }
+                }
+                , {field: 'oldPrice', title: '原价', width: 80, edit: 'text'}
+                , {field: 'nowPrice', title: '现价', width: 80, sort: true, edit: 'text'}
+                , {
+                    field: 'onSale', title: '是否在售', width: 100, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        let checked = d.onSale ? 'checked' : '';
+                        let div = "<div><input type=\"checkbox\" " + checked + " value='1' id='onSale-" + d.goodsId + "' lay-filter='onSale' name='onSale' lay-skin=\"switch\" lay-text=\"在售|停售\"></div>";
+                        return div;
+                    }
+                }
+                , {
+                    field: 'isCoupon', title: '是否团购', width: 100, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        let checked = d.isCoupon ? 'checked' : '';
+                        let div = "<div><input type=\"checkbox\" " + checked + "  value='1' id='isCoupon-" + d.goodsId + "' lay-filter='isCoupon' name='isCoupon' lay-skin=\"switch\" lay-text=\"是|否\"></div>";
+                        return div;
+                    }
+                }
+                , {
+                    field: 'takeaway', title: '能否外卖', width: 100, templet: function (d) {// 这个d指的是本行的数据 js对象
+                        let checked = d.takeaway ? 'checked' : '';
+                        let div = "<div><input type=\"checkbox\" " + checked + "  value='1'  id='takeaway-" + d.goodsId + "'  lay-filter='takeaway' name='takeaway' lay-skin=\"switch\" lay-text=\"能|否\"></div>";
+                        return div;
+                    }
+                }
+                , {field: 'packagingFee', title: '包装费', width: 80, edit: 'text'}
+                , {field: 'weight', title: '重量', width: 80, edit: 'text'}
+                , {field: 'taste', title: '口味', width: 100, edit: 'text'}
+                , {field: 'stock', title: '库存', width: 80, edit: 'text'}
+                , {field: 'sold', title: '已售', width: 80}
+                , {field: 'score', title: '评分', width: 80}
+                , {field: 'province', title: '省份', width: 100}
+                , {
+                    field: 'weight', title: '轮播图', width: 300, templet: function (d) {
+                        let imgs = d.imgs;
+                        if (imgs != undefined) {
+                            let arr = imgs.split(',');
+                            let div = $("<div></div>")
+                            arr.forEach(i => {
+                                let img = "<img showBig style=\"border-radius: 3px;width: 50px;height: 50px;margin-right: 5px\" src='" + i + "'/>";
+                                div.append($(img))
+                            });
+                            return div.html();
+                        }
+                        return '';
+                    }
+                }
+                , {
+                    field: 'weight', title: '详情', width: 100, templet: function (d) {
+                        let div = "<div><button class='layui-btn layui-btn-xs layui-btn-primary' lay-event='showDetail'>查看</button></div>";
+                        return div;
+                    }
+                }
+                , {field: 'createTime', title: '创建时间', width: 160}
+                , {field: 'updateTime', title: '更新时间', width: 160}
+                , {field: 'updateUserName', title: '更新人', width: 80}
+                , {
+                    fixed: 'right', field: '', width: 100, title: '操作', templet: function (d) {// 这个d指的是本行的数据 js对象
+                        // console.log(d)
+                        return '<div>\n' +
+                            '  <button class="layui-btn layui-btn-xs " lay-event="updateData">修改</button>\n' +
+                            '  <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteData">删除</button>\n' +
+                            ' </div>'
+                    }
+                }
+            ]]
+            , toolbar: 'default'
+            , done() {
+                showBigImg();
+                form.render();
+            }
+        });
+        onSwitch('onSale');// 监听 是否在售
+        onSwitch('takeaway');
+        onSwitch('isCoupon');
+
+        form.on('select(selectType)', function (data) {
+            let gid = data.value.split('-')[0];
+            let typeId = data.value.split('-')[1];
+            console.log(gid)
+            console.log(typeId)
+            $.post("/pages/back/goods/edit", {goodsId: gid, goodsTypeId: typeId}, function (res) {
+                layer.msg(res.msg);
+            })
+        });
+
+        form.on('select(selectGoodsType)', function (data) {
+            $("#queryBtn").click();
+        });
+
+        //监听工具条
+        table.on('tool(goodsTable)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var d = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case 'updateData':
+                    window.location = '/pages/back/goods/editPre/' + d.goodsId;
+                    break;
+                case 'deleteData':
+                    layer.confirm('您确定操作吗?', function (index) {
+                        $.post('/pages/back/goods/delete/' + d.goodsId, {}, function (res) {
+                            layer.msg(res.msg);
+                            tb.reload()
+                        });
+                        layer.close(index);
+                    });
+
+                    break;
+                case 'showDetail':
+                    //第一个实例
+                    let systemRolesOpen = layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+                        type: 1,
+                        offset: '10px',
+                        area: ['60%', '90%'],
+                        title: "商品详情展示",
+                        shadeClose: true,
+                        content: $("#goodsDetail").html()
+                    });
+                    $("#goodsDetailDiv").html(d.detail); // 用html函数赋值
+                    $("#goodsDetailDiv").css({'overflow-y': 'auto'});
+                    break;
+
+            }
+        });
+        table.on('edit(goodsTable)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            let p = {};
+            p.goodsId = obj.data.goodsId;
+            p[obj.field] = obj.value;
+            editGoods(p);
+        });
+        // 工具栏监听事件监听事件
+        table.on('toolbar(goodsTable)', function (obj) {
+            console.log(obj);
+            // var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'add':
+                    window.location = '/pages/back/goods/addPre';
+                    break;
+                case 'delete':
+                    layer.msg('删除');
+                    break;
+                case 'update':
+                    layer.msg('编辑');
+                    break;
+            }
+            ;
+        });
+        form.on('submit(queryForm)', function (data) {
+            tb.reload({
+                where: data.field
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+        form.on('radio(onSale)', function (data) {
+            $("#queryBtn").click();
+        });
+        form.on('radio(isCoupon)', function (data) {
+            $("#queryBtn").click();
+        });
+        onInput($("#queryForm input"));
+
+        function editGoods(p) {
+            $.post('/pages/back/goods/edit', p, function (res) {
+                layer.msg(res.msg);
+            });
+        }
+
+        function onInput(jObj) {
+            jObj.on({
+                'input': function () {
+                    $("#queryBtn").click();// 这里直接换成查询按钮点击事件
+                }
+            })
+        }
+
+        function onSwitch(field) {// 自定义三个开官事件监听
+            form.on('switch(' + field + ')', function (data) {
+                let gid = data.elem.id.split('-')[1];
+                let p = {};
+                p.goodsId = gid;
+                if (data.elem.checked) {
+                    p[field] = 1;// 选中
+                } else {
+                    p[field] = 0;
+                }
+                editGoods(p);
+            });
+        }
+    });
+
+
+</script>
+</body>
+
+</html>

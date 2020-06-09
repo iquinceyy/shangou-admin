@@ -56,5 +56,15 @@ public class User implements Serializable {
      */
     private String roles;
 
+    /**
+     * 备注
+     */
+    private String note;
+
+    /**
+     * 照片
+     */
+    private String photo;
+
     private static final long serialVersionUID = 1L;
 }

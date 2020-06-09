@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<div style="font-size: 20px;font-weight: bold;text-align: center">商品信息</div>
+<div th:replace="fragment/js::js"></div>
+<div th:replace="fragment/map::map"></div>
+
+<script type="text/javascript" th:src="@{/qc/cityPiker/cityPiker.js}"></script>
+<script type="text/javascript" th:src="@{/qc/upload/upload.js}"></script>
+<script type="text/javascript" th:src="@{/wangedit/wangEditor.js}"></script>
+<style>
+    /*修改layui表格的高度*/
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<body>
+<!--分页组件-->
+    <form class="layui-form" style="padding: 20px"  >
+        <div style="display: flex">
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" id="title" th:value="${goods.title}" placeholder="请输入商品名称"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品副标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="subTitle" id="subTitle" th:value="${goods.subTitle}"  placeholder="请输入商品名称"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex">
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品原价</label>
+                <div class="layui-input-block">
+                    <input type="text" name="oldPrice" id="oldPrice" th:value="${goods.oldPrice}" placeholder="商品原价"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品现价</label>
+                <div class="layui-input-block">
+                    <input type="text" name="nowPrice" id="nowPrice" th:value="${goods.nowPrice}" placeholder="商品现价"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+
+        <div style="display: flex">
+            <div class="layui-form-item">
+                <label class="layui-form-label">重量</label>
+                <div class="layui-input-block">
+                    <input type="text" name="weight" id="weight" th:value="${goods.weight}" placeholder="重量"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">口味</label>
+                <div class="layui-input-block">
+                    <input type="text" name="taste" id="taste" th:value="${goods.taste}" placeholder="口味"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+
+        <div style="display: flex">
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序编号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" id="sort" th:value="${goods.sort}" placeholder="排序编号"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">库存</label>
+                <div class="layui-input-block">
+                    <input type="text" name="stock" id="stock" th:value="${goods.stock}" placeholder="库存"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+
+        <div style="display: flex">
+            <div class="layui-form-item">
+                <label class="layui-form-label">好评次数</label>
+                <div class="layui-input-block">
+                    <input type="text" name="praise" id="praise" th:value="${goods.praise}" placeholder="好评次数"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">已售</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sold" id="sold" th:value="${goods.sold}" placeholder="已售"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex">
+            <div class="layui-form-item">
+                <label class="layui-form-label">城市区域</label>
+                <div class="layui-input-block">
+                    <input type="text" cityPicker name="pcd" th:value="${goods.pcd}"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">打包费</label>
+                <div class="layui-input-block">
+                    <input type="text" name="packagingFee" id="packagingFee" th:value="${goods.packagingFee}" placeholder="打包费"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div style="display: flex">
+                <span class="layui-form-label">商品类型</span>
+                <div class="layui-input-block" style="width: 100px;margin-left: 0">
+                    <select name="goodsTypeId" class="layui-select" lay-verify="required">
+                        <option th:each="t:${goodsTypes}" th:value="${t.goodsTypeId==goods.goodsTypeId?true:fale}"
+                                th:
+                                th:text="${t.typeName}"></option>
+                    </select>
+                </div>
+<!--                <div style="display: flex">-->
+<!--                    <span class="layui-form-label">经营类型</span>-->
+<!--                    <select name="businessTypeId" id="businessTypeId" >-->
+<!--                        <option value="1"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+            </div>
+        </div>
+
+        <div style="display: flex">
+<!--            <div class="layui-form-item">-->
+<!--                <label class="layui-form-label">是否展示</label>-->
+<!--                <div class="layui-input-block">-->
+<!--                    <input type="checkbox" name="show" value="1" id="show" checked lay-skin="switch"-->
+<!--                           lay-filter="">-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否在售</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="onSale" id="onSale" th:value="${goods.onSale}" checked lay-skin="switch">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否外卖</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="takeaway" id="takeaway" th:value="${goods.takeaway}" checked lay-skin="switch">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否团购</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="isCoupon" id="isCoupon" th:value="${goods.isCoupon}" checked lay-skin="switch">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品主图</label>
+            <div class="layui-input-block">
+                <div lh-upload id="pic" th:value="${goods.pic}"></div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品轮播图</label>
+            <div>
+                <div lh-upload id="imgs" th:value="${goods.imgs}"></div>
+            </div>
+        </div>
+
+        <div>
+            <label>商品详情</label>
+        </div>
+        <div id="wangEdit" style="width: 80%">
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="editForm">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+<script th:inline="javascript" type="text/javascript">
+
+    $(function () {
+        // 富文本
+        var E = window.wangEditor;
+        var editor = new E('#wangEdit');
+
+        // 使用路径传参
+        editor.customConfig.uploadImgParamsWithUrl = true;
+        // 配置服务器端地址
+        editor.customConfig.uploadImgServer = '/pages/back/upload/wangEditorUploadFiles';
+        editor.create();
+
+        layui.use(['layer', 'table', 'form'], function () {
+            // let validateArr = ['doorImg'];
+            let layer = layui.layer;
+            let form = layui.form;
+
+            uploadFile({
+                dir: 'goods',// 将这些图片保存到商品文件夹
+            });// 一定要
+
+            form.on('submit(editForm)', function (data) {
+                console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+                console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+                console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+
+                data.field.detail = editor.txt.html();
+                if (data.field.pic == undefined) {
+                    layer.msg("主图还是需要上传的")
+                    return false;
+                }
+                $.post('/pages/back/goods/edit/',data.field,function (res) {
+                    console.log(res);
+                    layer.msg(res.msg);
+                });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+
+
+        });
+
+
+    })
+
+
+
+</script>
+</body>
+</html>

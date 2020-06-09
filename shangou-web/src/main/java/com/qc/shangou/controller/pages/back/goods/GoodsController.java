@@ -48,11 +48,11 @@ public class GoodsController extends BaseController {
     }
 
     // 商户对自己的商品进行列表查看
-    @RequestMapping("merchantlist")
+    @RequestMapping("merchantList")
     String merchantlist(Model model){
         List<GoodsTypeVO> merchantGoodsTypes = goodsTypeService.getMerchantGoodsTypes(getMerchantId());
         model.addAttribute("goodsTypes",merchantGoodsTypes);
-        return "pages/back/goods/goods-merchantlist";
+        return "pages/back/goods/merchant-goods-list";
     }
 
     //增加商品列表url      2

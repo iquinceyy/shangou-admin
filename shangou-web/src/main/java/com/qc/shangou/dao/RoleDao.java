@@ -6,6 +6,7 @@ import com.qc.shangou.pojo.vo.RoleVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Author quincey
@@ -34,4 +35,7 @@ public interface RoleDao {
     int deleteByPrimaryKeys(@Param("ids") List<Role> roles);
 
     List<RoleVO> getSystemRoles();
+
+    List<Role> selectByPermissions(@Param("ids")Set<String> collect);
+
 }

@@ -16,9 +16,59 @@
         }
     </style>
 </head>
-<script type="text/javascript" th:src="@{/jquery/jquery.js}"></script>
 <div th:replace="fragment/js::js"></div>
 <link rel="stylesheet" th:href="@{/layui/css/home.css}" media="all">
+<script type="text/javascript" th:src="@{/lh/upload/upload.js}"></script>
+<script type="text/html" id="editUserFormDiv">
+    <div style="padding: 20px">
+        <form class="layui-form" id="userEditForm" lay-filter="userEditForm">
+            <input type="hidden" name="userId" th:value="${session.userId}"/>
+            <div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="nickName" id="nickName" th:value="${session.nickName}" required
+                               lay-verify="required"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">真名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="realName" id="realName" th:value="${session.realName}" required
+                               lay-verify="required"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="password" id="password" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">头像</label>
+                    <div class="layui-input-block">
+                        <div lh-upload id="photo" th:value="${session.photo}"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-block">
+                        <div style="padding: 10px 0">
+                            <button class="layui-btn " lay-submit lay-filter="userEditForm">修改</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+
+</script>
+
 <body class="layui-layout-body">
 <div id="LAY_app">
     <div class="layui-layout layui-layout-admin">
@@ -31,7 +81,7 @@
                     </a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs">
-                    <a onclick="window.location=dom" target="_blank" title="前台">
+                    <a th:href="@{/}" target="_blank" title="前台">
                         <i class="layui-icon layui-icon-website"></i>
                     </a>
                 </li>
@@ -65,13 +115,12 @@
                 </li>
                 <li class="layui-nav-item">
                     <div style="display: flex;align-items: center">
-                        <img th:src="${session.photo}" style="width: 30px;height: 30px;border-radius: 100%"/>
+                        <img showBig th:src="${session.photo}" style="width: 30px;height: 30px;border-radius: 100%"/>
                         <a href="javascript:;">
-                            <cite th:text="${session.nickName}">11111</cite>
+                            <cite th:text="${session.nickName}">5秒真男人</cite>
                         </a>
                         <dl class="layui-nav-child">
-                            <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                            <dd><a lay-href="set/user/password.html">修改密码</a></dd>
+                            <dd><a href="javascript:;" id="editUserInfo">基本资料</a></dd>
                             <hr>
                             <dd layadmin-event="logout" style="text-align: center;"><a th:href="@{/logout}">退出</a></dd>
                         </dl>
@@ -86,17 +135,16 @@
                 </li>
             </ul>
         </div>
-
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu" id="leftMenuDiv">
             <div class="layui-side-scroll">
                 <div class="layui-logo">
-                    <span>闪购超市管理后台</span>
+                    <span>闪购管理后台</span>
                 </div>
                 <ul class="layui-nav layui-nav-tree " id="sideMenu">
                     <li class="layui-nav-item " th:each="r:${session.hisRoles}">
                         <a href="javascript:;" name="superMarketMenu">
-                            <i th:class="${r.icon}+' layui-icon'" ></i>
+                            <i th:class="${r.icon}+' layui-icon'"></i>
                             <cite th:text="${r.name}">角色名称</cite>
                         </a>
                         <dl class="layui-nav-child" th:each="p:${r.permissionVOS}" th:if="${p.show}">
@@ -108,7 +156,6 @@
                 </ul>
             </div>
         </div>
-
         <!-- 页面标签 -->
         <div class="layadmin-pagetabs" id="LAY_app_tabs">
             <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
@@ -134,7 +181,7 @@
             </div>
         </div>
 
-        <!-- 主体内容 -->
+        <!-- 主体内容,内嵌的网页 iframe（最简单，但是并不好，比方说后面的支付宝支付要跳转的时候，办不到） -->
         <div class="layui-body" id="LAY_app_body">
             <iframe id="layadmin-iframe" th:src="@{/pages/back/dashBoard}" frameborder="0"
                     class="layadmin-iframe"></iframe>
@@ -145,17 +192,34 @@
 </div>
 <script th:inline="javascript" type="text/javascript">
 
-    layui.use('element', function () {
-        var element = layui.element;
-
-        let $ = layui.$;
+    layui.use(['element', 'layer', 'form'], function () {
+        // top=> 指的顶层窗口
+        let layer = layui.layer;
+        let element = layui.element;
+        let form = layui.form;
+        // 监听表单事件
+        form.on('submit(userEditForm)', function (data) {
+            if (data.field.password!=null){//修改了密码
+                if (data.field.password.length<6){
+                    layer.msg('密码长度太弱');
+                    return  false
+                }
+            }
+            $.post('/pages/back/user/edit',data.field,function (res) {
+                layer.msg(res.msg);
+                setTimeout(function () {
+                    window.location.reload();
+                },2000)
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
         let iframe = $("#layadmin-iframe");
-
         $("[name=superMarketMenu]").click(function () {
             $(".layui-nav-child").css({
                 padding: 0
             })
         });
+
         $("#sideMenu [lay-href]").hover(function () {
             $(this).css({
                 color: 'white'
@@ -166,6 +230,18 @@
                     color: 'rgba(255, 255, 255, .7)'
                 });
             }
+        });
+        $("#editUserInfo").click(function () {
+            layer.open({
+                type: 1,
+                title: '修改信息',
+                area: 'fit-content',
+                shadeClose: true,
+                content: $("#editUserFormDiv").html()
+            });
+            uploadFile({
+                dir: 'user',// 将这些图片保存到商品文件夹
+            });// 一定要
         });
         $("[lay-href]").click(function () {
             let thisJobj = $(this);// 把jsDom对象转换程jquery对象
@@ -312,7 +388,9 @@
             }
         }
     }
+
 </script>
+
 </body>
 </html>
 

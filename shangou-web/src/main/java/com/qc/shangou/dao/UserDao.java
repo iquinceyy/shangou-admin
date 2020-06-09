@@ -6,10 +6,6 @@ import com.qc.shangou.pojo.vo.UserVO;
 
 import java.util.List;
 
-/**
- * Author quincey
- * Date 2020/5/29 16:06
- */
 public interface UserDao {
     int deleteByPrimaryKey(Long userId);
 

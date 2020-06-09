@@ -1,9 +1,11 @@
 package com.qc.shangou.config.shiro;
 
+import com.qc.shangou.pojo.entity.User;
 import com.qc.shangou.pojo.query.UserQuery;
 import com.qc.shangou.pojo.vo.RoleVO;
 import com.qc.shangou.pojo.vo.UserVO;
 import com.qc.shangou.service.UserService;
+import com.qc.shangou.util.net.NetUtil;
 import com.qc.shangou.util.password.PasswordUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -47,12 +49,12 @@ public class UserRealm extends AuthorizingRealm {
         //把code取出来
         Object code = session.getAttribute("code");
         UserQuery query = new UserQuery();
+        String password = new String((char[]) credentials);// 前端传递过来的// String.valueOf((char[]) credentials)
+        query.setPhone((String) principal);
+        UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
 
         //常规密码验证
         if (StringUtils.isEmpty(code)){
-            String password = new String((char[]) credentials);// 前端传递过来的// String.valueOf((char[]) credentials)
-            query.setPhone((String) principal);
-            UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
             if (dbUser == null) {
                 throw new UnknownAccountException("账户或密码错误");
             } else {// 账户虽然存在，就要开始比较密码
@@ -61,41 +63,34 @@ public class UserRealm extends AuthorizingRealm {
                     throw new CredentialsException("账户或密码错误");
                 }
             }
-            session.setAttribute("userId", dbUser.getUserId());
-            session.setAttribute("nickName", dbUser.getNickName());
-            session.setAttribute("phone", dbUser.getPhone());
-            session.setAttribute("realName", dbUser.getRealName());
-            // 设置角色
-            List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
-            session.setAttribute("hisRoles",roleVOS);
+//            session.setAttribute("userId", dbUser.getUserId());
+//            session.setAttribute("nickName", dbUser.getNickName());
+//            session.setAttribute("phone", dbUser.getPhone());
+//            session.setAttribute("realName", dbUser.getRealName());
+//            // 设置角色
+//            List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
+//            session.setAttribute("hisRoles",roleVOS);
         }else{//短信验证
             //获取发送的短信验证码
             Object loginCode = session.getAttribute("loginCode");
             if (code.equals(loginCode)){//登录成功 验证码相等
                 query.setPhone((String) principal);
-                UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
+//                UserVO dbUser = userService.selectDbUserByPhone(query);// 拿到了数据库的用户
                 Object isBack = session.getAttribute("isBack");
                 if (dbUser==null){
                     if (isBack!=null){
                         boolean isBackFlag = (boolean)isBack;
                         if (!isBackFlag){
                             //注册新用户
-                            UserVO user = new UserVO();
+                            User user = new User();
                             user.setNickName("请修改名字");
                             user.setPhone(query.getPhone());
                             user.setLastLoginTime(new Date());
+//                            user.setLastLoginIp();
                             dbUser=userService.addUser(user);
                         }
                     }
                 }
-
-                session.setAttribute("userId",dbUser.getUserId());
-                session.setAttribute("nickName",dbUser.getNickName());
-                session.setAttribute("phone",dbUser.getPhone());
-                session.setAttribute("realName",dbUser.getRealName());
-                //设置角色
-                List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
-                session.setAttribute("hisRoles",roleVOS);
             }else {
                 throw  new CredentialsException("验证码错误");
             }
@@ -109,12 +104,25 @@ public class UserRealm extends AuthorizingRealm {
 //            throw new AuthenticationException("账户名或密码错误");
 //        }
         // 应该设置 session
+        session.setAttribute("userId",dbUser.getUserId());
+        session.setAttribute("nickName",dbUser.getNickName());
+        session.setAttribute("phone",dbUser.getPhone());
+        session.setAttribute("realName",dbUser.getRealName());
+        session.setAttribute("photo", dbUser.getPhoto());
 
+        //设置角色
+        List<RoleVO> roleVOS = userService.selectHisRolesByPhone(dbUser.getPhone());
+        session.setAttribute("hisRoles",roleVOS);
 
+        User u = new User();
+        u.setUserId(dbUser.getUserId());
+        u.setLastLoginTime(new Date());
+        u.setLastLoginIp(NetUtil.getIpAddr());
+        userService.updateUser(u);
 
         // 设置权限
         return new SimpleAuthenticationInfo(authenticationToken.getPrincipal(), authenticationToken.getCredentials(), "userRealm");
-//        return new SimpleAuthenticationInfo("18875150682", "123456", "userRealm");
+
     }
 
     /**

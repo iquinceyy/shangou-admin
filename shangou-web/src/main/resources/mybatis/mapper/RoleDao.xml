@@ -173,6 +173,14 @@
         from role where `system`=1
         order by sort
     </select>
+    <select id="selectByPermissions" resultType="com.qc.shangou.pojo.entity.Role">
+        select <include refid="Base_Column_List"/>
+        from role
+        where 'system'=0 and permissions in
+        <foreach collection="ids" open="(" close=")" separator="," item="s">
+            #{s}
+        </foreach>
+    </select>
 
     <delete id="deleteByPrimaryKeys">
         delete from role where role_id in

@@ -7,32 +7,8 @@
 <div th:replace="fragment/js::js"></div>
 
 <body>
-<h1>这个是layui的使用</h1>
-
-<div class="layui-inline"><input type="text" class="layui-input" id="dateTest"></div>
 <!--分页组件-->
-<div id="test1"></div>
 <table id="userTable" lay-filter="userTable"></table>
-<!--等待被加载到document文档种的一片段代码-->
-<button id="MyToolBar" class="layui-btn layui-btn-warm layui-btn-xs">添加</button>
-<button id="getTrInfo" class="layui-btn layui-btn-warm layui-btn-xs">取出自定义的一些属性</button>
-<script type="text/html" id="div">
-    <div>
-        <button class="layui-btn layui-btn-danger" id="btn">关闭弹框</button>
-        <h1>第一行</h1>
-        <h1>第2行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-        <h1>第3行</h1>
-    </div>
-</script>
-
 <script type="text/html" id="addForm">
     <input type="file" id="fileTest">
     <form class="layui-form">
@@ -54,46 +30,6 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">选择框</label>
-            <div class="layui-input-block" style="width: 160px">
-                <select name="city" lay-filter="addForm">
-                    <option value=""></option>
-                    <option value="0">北京</option>
-                    <option value="1">上海</option>
-                    <option value="2">广州</option>
-                    <option value="3">深圳</option>
-                    <option value="4">杭州</option>
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">复选框</label>
-            <div class="layui-input-block">
-                <input type="checkbox" name="like[write]" title="写作">
-                <input type="checkbox" name="like[read]" title="阅读" checked>
-                <input type="checkbox" name="like[dai]" title="发呆">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">开关</label>
-            <div class="layui-input-block">
-                <input type="checkbox" name="switch" lay-skin="switch">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">单选框</label>
-            <div class="layui-input-block">
-                <input type="radio" name="sex" value="男" title="男">
-                <input type="radio" name="sex" value="女" title="女" checked>
-            </div>
-        </div>
-        <div class="layui-form-item layui-form-text">
-            <label class="layui-form-label">文本域</label>
-            <div class="layui-input-block">
-                <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
-            </div>
-        </div>
-        <div class="layui-form-item">
             <div class="layui-input-block">
                 <button class="layui-btn" lay-submit lay-filter="commit">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -109,11 +45,9 @@
         let laydate = layui.laydate;// 日期组件
         let laypage = layui.laypage;// 分页组件
         let table = layui.table;// 分页组件
-        let form = layui.form;// 分页组件
-
+        let form = layui.form;// 分页组
 
         let $ = layui.$;// 使用jquery
-        // layer.msg('弹出一个消息', {icon: 1});
 
         //第一个实例
         let tb = table.render({// 渲染表格
@@ -133,15 +67,13 @@
                         return '<div>\n' +
                             '            <button class="layui-btn layui-btn-xs layui-btn-primary" lay-event="addData">增加</button>\n' +
                             '            <button class="layui-btn layui-btn-xs " lay-event="updateData">修改</button>\n' +
-                            '            <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteData">删除</button>\n' +
-                            ' </div>'
+                            '            <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteData">删除</button>\n' + ' </div>'
 
                     }
                 }
             ]]
             , toolbar: 'default'
         });
-
         form.on('submit(commit)', function (data) {
             console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
             console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
@@ -179,11 +111,8 @@
                 },
                 type: 'post',// ajax请求的方式，post或get
             })
-
-
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
-
 
         $("#getTrInfo").click(function () {
             let tr = $("tr:eq(1)")[0];
@@ -207,33 +136,11 @@
             console.log(obj);
         });
 
-
         table.on('edit(userTable)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
             console.log(obj.value); //得到修改后的值
             console.log(obj.field); //当前编辑的字段名
             console.log(obj.data); //所在行的所有相关数据
         });
-
-        // 监听行单击事件
-        table.on('row(userTable)', function (obj) {
-            console.log(obj.tr) //得到当前行元素对象
-            let trDom = obj.tr[0];// jsDom对象
-            console.log(trDom.arr)
-
-
-            layer.msg('单击事件')
-            //obj.del(); //删除当前行
-            //obj.update(fields) //修改当前行数据
-        });
-//
-// //监听行双击事件
-//         table.on('rowDouble(userTable)', function (obj) {
-//             console.log(obj) //得到当前行元素对象
-//             console.log(obj.tr) //得到当前行元素对象
-//             console.log(obj.data) //得到当前行数据
-//             layer.msg('2击事件')
-//             //obj 同上
-//         })
 
         // 工具栏监听事件监听事件
         table.on('toolbar(userTable)', function (obj) {
@@ -249,17 +156,11 @@
                     });
                     form.render();
 
-
-                    // let passInpit = $("[type=password]");
-                    // passInpit.addClass('testCls');
-                    // console.log(passInpit);
                     form.on('select(addForm)', function (data) {// 监听表单的下拉选择.注意，你监听这个函数的时候，一定是要在表单渲染之后
                         console.log(data.elem); //得到select原始DOM对象
                         console.log(data.value); //得到被选中的值
                         console.log(data.othis); //得到美化后的DOM对象
                     });
-
-
                     break;
                 case 'delete':
                     layer.msg('删除');
@@ -270,63 +171,6 @@
             }
             ;
         });
-        table.on('checkbox(userTable)', function (obj) {
-            console.log(obj); //当前是否选中状态
-            console.log(obj.checked); //当前是否选中状态
-            console.log(obj.data); //选中行的相关数据
-            console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
-        });
-
-
-        // tb.reload({
-        //     where: {title: "商品"}
-        // });// 表格重新加载
-
-
-        //执行一个laydate实例
-        laydate.render({// 渲染日期输入框
-            elem: '#dateTest' //指定元素
-            , range: '至' // 开启时间范围选择
-            , format: 'yyyy/MM/dd' //可任意组合
-        });
-
-
-        //执行一个laypage实例
-        laypage.render({
-            elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
-            , count: 50 //数据总数，从服务端得到
-        });
-
-
-        //eg1
-        // layer.confirm('纳尼？', {
-        //     btn: ['按钮一', '按钮二', '按钮三'] //可以无限个按钮
-        //     , btn3: function (index, layero) {
-        //         //按钮【按钮三】的回调
-        //     }
-        // }, function (index, layero) {
-        //     //按钮【按钮一】的回调
-        // }, function (index) {
-        //     //按钮【按钮二】的回调
-        // });
-
-        //
-        // let open = layer.open({// 就回返回一个index对象
-        //     type: 1
-        //     , title: "这个是一个信息框"
-        //     , content: $("#div").html()
-        //     , shadeClose: true // 这个是点击遮罩层是否关闭弹框
-        // })
-        $("#btn").click(function () {
-            layer.close(open)
-        })
-        // layer.confirm('您确定删除吗?', {icon: 3, title: '确定吗？'}, function (index) {
-        //     //do something
-        //     alert('执行ajax请求去删除数据');
-        //
-        //     layer.close(index);// 关闭某个弹框，传入弹框的下标
-        // });
-
     });
 
 
