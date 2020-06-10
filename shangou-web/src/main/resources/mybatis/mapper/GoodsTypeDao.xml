@@ -106,6 +106,8 @@
         and merchant_id like concat ('%',#{merchantId},'%')
       </if>
     </where>
+
   </select>
+
 
 </mapper>

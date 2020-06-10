@@ -1,23 +1,29 @@
 package com.qc.shangou.service.impl;
 
+import com.qc.shangou.dao.GoodsDao;
+import com.qc.shangou.dao.GoodsTypeDao;
 import com.qc.shangou.dao.MerchantDao;
 import com.qc.shangou.pojo.consts.enums.ApprovalEnum;
 import com.qc.shangou.pojo.dto.PageDTO;
 import com.qc.shangou.pojo.dto.ResponseDTO;
+import com.qc.shangou.pojo.entity.Goods;
+import com.qc.shangou.pojo.entity.GoodsType;
 import com.qc.shangou.pojo.entity.Merchant;
 import com.qc.shangou.pojo.query.MerchantQuery;
-import com.qc.shangou.pojo.vo.MerchantVO;
-import com.qc.shangou.pojo.vo.PermissionVO;
-import com.qc.shangou.pojo.vo.RoleVO;
+import com.qc.shangou.pojo.vo.*;
 import com.qc.shangou.service.ImgCacheService;
 import com.qc.shangou.service.MerchantService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Author quincey
@@ -30,6 +36,10 @@ public class MerchantServiceImpl implements MerchantService {
     MerchantDao merchantDao;
     @Resource
     ImgCacheService imgCacheService;
+    @Resource
+    GoodsTypeDao goodsTypeDao;
+    @Resource
+    GoodsDao goodsDao;
 
     @Override
     public PageDTO ajaxList(MerchantQuery query) {
@@ -88,6 +98,43 @@ public class MerchantServiceImpl implements MerchantService {
         if (m != null) {
             return m.getMerchantId();
         }
+        return null;
+    }
+
+    @Override
+    public PageDTO getNearByMerchantGoods(MerchantQuery merchantQuery) {
+        //1.查询附近的商铺  剔除空的  用iterator
+        List<MerchantVO> merchantVOS = merchantDao.ajaxList(merchantQuery);
+        //2.查询商铺卖的最好的商品
+        if (!CollectionUtils.isEmpty(merchantVOS)){
+            //卖的最好的商品类型集合
+            List<GoodsVO> merchantBestGoods = goodsDao.getMerchantBestGoods(merchantVOS);
+            //流 根据MerchantId分组
+            Map<Long, List<GoodsVO>> collect = merchantBestGoods.stream().collect(Collectors.groupingBy(GoodsVO::getMerchantId));
+
+            //迭代除去空的商铺 没有卖的
+            Iterator<MerchantVO> iterator = merchantVOS.iterator();
+            while (iterator.hasNext()){//是否有下一个
+                MerchantVO next = iterator.next();//得到商户
+                List<GoodsVO> goodsVOS = collect.get(next.getMerchantId());
+
+                //判断集合是否为空
+                if (CollectionUtils.isEmpty(merchantBestGoods)){
+                    //为空 移除
+                    iterator.remove();
+                }else{
+                    next.setBestGoods(goodsVOS.get(0));// 不管有多少个卖得相同数量最好的，都只取一个
+                }
+            }
+        }
+
+        Integer count = merchantDao.ajaxListCount(merchantQuery);
+        return PageDTO.setPageData(count,merchantVOS);
+
+    }
+
+    @Override
+    public MerchantVO selectMerchantById(Long merchantId) {
         return null;
     }
 

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="bottom_menu" id="bottom_menu"
+     style="position: absolute;bottom: 0;left:0;right:0;display: flex;justify-content: space-between;align-items: center;height: 50px">
+    <style>
+        #bottom_menu img {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+
+        #bottom_menu > div {
+            padding: 0 15px;
+            cursor: pointer;
+            width: 25%;
+            text-align: center;
+            font-size: 13px;
+
+        }
+    </style>
+    <div th:url="@{/}">
+        <div>
+            <img th:src="@{/images/menu/home.png}"/>
+        </div>
+        <div>
+            首页
+        </div>
+    </div>
+    <div th:url="@{/pages/back/shopCar/list}">
+        <div style="text-align: center">
+            <img th:src="@{/images/menu/car_gray.png}"/>
+        </div>
+        <div>
+            购物车
+        </div>
+    </div>
+
+    <div th:url="@{/pages/back/order/listUserOrders}">
+        <div>
+            <img th:src="@{/images/menu/order_gray.png}"/>
+        </div>
+        <div>
+            订单
+        </div>
+    </div>
+    <div th:url="@{/pages/front/user/userInfo}">
+        <div>
+            <img th:src="@{/images/menu/my_gray.png}"/>
+        </div>
+        <div>
+            我的
+        </div>
+    </div>
+
+    <script th:inline="javascript" type="text/javascript">
+        $(function () {
+            let pathName = window.location.pathname;
+            $("#bottom_menu>div").each(function () {
+                let jthis=$(this);
+                let url = jthis.attr("url");
+                if(pathName.startsWith(url)){
+                    let jImg= jthis.find("img");
+                    let imgUrl=jImg.attr("src");
+                    let  newImg=imgUrl.replace('_gray','');
+                    jImg.attr("src",newImg);
+                    jthis.css({color:'orange'})
+                }
+                jthis.click(function () {
+                    window.location = url;
+                });
+            })
+
+        })
+    </script>
+</div>
+
+
+</html>

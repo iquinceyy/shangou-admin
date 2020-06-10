@@ -15,6 +15,8 @@ import com.qc.shangou.pojo.vo.MerchantVO;
 import com.qc.shangou.service.GoodsService;
 import com.qc.shangou.service.GoodsTypeService;
 import com.qc.shangou.service.MerchantService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,8 +93,11 @@ public class GoodsController extends BaseController {
     }
 
 
-    @RequestMapping("edit}")
+    @RequestMapping("edit")
     @ResponseBody
+    // 需要商户管理角色才能访问这个接口
+    @RequiresRoles("merchant")
+    @RequiresPermissions("goods:edit")
     ResponseDTO editGoods(Goods goods) {
         //设置最后一次的修改人
         goods.setUpdateUser(getUserId());

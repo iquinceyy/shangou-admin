@@ -160,12 +160,26 @@
 
     //接收商户id
     let addApprovalLogMerchantId;
+
     layui.use(['layer', 'table', 'form'], function () {
         let layer = layui.layer;// 弹出层
         let table = layui.table;// 分页组件
         let form = layui.form;// 分页组件
         var addOpen;
         var logOpen;
+
+        //地图
+        initMap(function (res) {
+            layer.confirm('确定操作嘛？',function (index) {
+                console.log(index);
+                if (addApprovalLogMerchantId!=null){
+                    let p ={};
+                    p.merchantId = addApprovalLogMerchantId;
+                    p.address = res.name;
+                }
+            })
+
+        });
 
         //第一个实例
         let tb = table.render({// 渲染表格

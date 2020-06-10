@@ -171,7 +171,7 @@
 </div>
 <script th:inline="javascript" type="text/javascript">
     $(function () {
-
+        nitMap();
         let validateArr = ['doorImg'];
         //, 'interiorImg', 'cardUserImg', 'cardGuohuiImg', 'cardHandImg', 'businessLicenseImg', 'securityPermitImg'
         layui.use(['layer', 'form'], function () {
@@ -202,7 +202,7 @@
                     let g=res.res//true
                     if (res.res){
                         layer.msg(res.msg)
-                        window.location='/pages/back/merchant/approvalStatus'
+                        window.location='../../../../static/pages/merchant/approvalStatus'
                     }
                     // if (g){
                     //     console.log(22222)

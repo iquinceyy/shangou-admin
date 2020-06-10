@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<div th:replace="fragment/js::js"></div>
 
+<div th:replace="fragment/js::js"></div>
+<style>
+    /*修改layui表格的高度*/
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
 <body class="layui-card-body layui-card">
-<!--分页组件-->
 <div style="padding: 10px;" class="layui-card">
-    <form id="queryForm" class="layui-form" method="post"
+<!--    method="post"-->
+    <form id="queryForm" class="layui-form"
           style="display: flex;align-items: center">
         <div class="layui-hide-xs" style="display: flex;align-items: center">
             <span style="width: fit-content">用户昵称:</span>
@@ -31,6 +33,7 @@
     </form>
     <table id="userTable" lay-filter="userTableFilter"></table>
     <!--        <div th:include="plugins/splitBar::splitBar"></div>-->
+
 </div>
 <!--查看这个角色的权限的弹框-->
 <script type="text/html" id="showPermissionDiv">
@@ -57,41 +60,45 @@
     </div>
 </script>
 
+
+<!--// 加上th:inline='javascript' 否则可能会因为小于或者大于符号导致 thymeleaf模板引擎解析错误。-->
 <script th:inline="javascript" type="text/javascript">
     $(function () {
         let systemRoles = [[${systemRoles}]];
-        layui.use(['layer', 'laydate', 'table', 'form'], function () {
-            let layer = layui.layer;// 弹出层
-            let laydate = layui.laydate;// 日期组件
-            let table = layui.table;
-            let form = layui.form;
-
+        layui.use(['table', 'layer', 'laydate', 'form'], function () {
+            var table = layui.table;
+            var layer = layui.layer;
+            var laydate = layui.laydate;
+            var form = layui.form;
+            laydate.render({
+                elem: '#creteDateRange' //指定元素
+                , range: '至'
+            });
             //第一个实例
-            let tb = table.render({// 渲染表格
+            var userTable = table.render({
                 elem: '#userTable'
-                , url: '/pages/back/user/ajaxUserList' //服务后台的数据接口
-                , page: true //开启分页
-                , cols: [[ //表头，这里是两个[[开头，两个]]结尾
-                    {field: '', type: 'checkbox', title: '多选'}
-                    , {field: 'userId', title: '用户ID', width: 80, sort: true}
-                    , {field: 'nickName', title: '昵称', width: 200}
-                    , {field: 'reaName', title: '真实名字', width: 160, sort: true}
+                , page: true
+                , url: '/pages/back/user/ajaxUserList' //数据接口
+                , cols: [[ //表头
+                    {width: 40, type: "checkbox"}
+                    , {field: 'userId', title: 'ID', width: 60}
+                    , {field: 'nickName', title: '用户昵称', width: 140}
+                    , {field: 'realName', title: '真实姓名', width: 100}
                     , {
                         field: '', title: '用户头像', width: 100, templet: function (d) {
                             return '<div ><img showBig style="width: 50px;height: 50px;border-radius: 5px" src="' + d.photo + '"></div>'
                         }
                     }
-                    , {field: 'phone', title: '电话', width: 180}
-                    , {field: 'email', title: '邮箱', width: 120}
+                    , {field: 'phone', title: '手机号', width: 120}
+                    , {field: 'lastLoginTime', title: '最近登陆时间', width: 160}
+                    , {field: 'lastLoginIp', title: '最近登录ip', width: 140}
                     , {field: 'note', title: '备注', width: 140,edit:'text'}
                     , {
-                        field: '', title: '操作', templet: function (d) {// 这个d指的是本行的数据 js对象
-                            // console.log(d)
-                            return '<div>\n' +
-                                '            <button class="layui-btn layui-btn-xs layui-btn-warm" lay-event="showPermissions">调整权限</button>\n' +
-                                '            <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="lock">锁定</button>\n' +
-                                '            <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteData">删除</button>\n' + ' </div>'
-
+                        field: '', title: '操作', width: 180, templet: function (d) {
+                            return '<div >' +
+                                '<button class="layui-btn  layui-btn-warm layui-btn-xs" lay-event="showPermissions">调整权限</button>' +
+                                '<button class="layui-btn layui-btn-danger  layui-btn-xs" lay-event="lock">锁定</button>' +
+                                '</div>'
                         }
                     }
                 ]]
@@ -100,25 +107,12 @@
                     showBigImg();
                 }
             });
-
+            //监听头部工具栏的事件
             table.on('toolbar(userTableFilter)', function (obj) {
-                // console.log(obj);
-                // var checkStatus = table.checkStatus(obj.config.id);
+                var checkStatus = table.checkStatus(obj.config.id);
                 switch (obj.event) {
                     case 'add':
-                        layer.msg('添加');
 
-                        layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
-                            title: "用户添加",
-                            content: $("#addForm").html()
-                        });
-                        form.render();
-
-                        form.on('select(addForm)', function (data) {// 监听表单的下拉选择.注意，你监听这个函数的时候，一定是要在表单渲染之后
-                            console.log(data.elem); //得到select原始DOM对象
-                            console.log(data.value); //得到被选中的值
-                            console.log(data.othis); //得到美化后的DOM对象
-                        });
                         break;
                     case 'delete':
                         layer.msg('删除');
@@ -129,24 +123,18 @@
                 }
                 ;
             });
-
-            table.on('edit(userTableFilter)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-                console.log(obj.value); //得到修改后的值
-                console.log(obj.field); //当前编辑的字段名
-                console.log(obj.data); //所在行的所有相关数据
-                let p ={}
-                p.userId =obj.data.userId;
-                p[obj.field]=obj.value;
+            table.on('edit(userTableFilter)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+                let p = {};
+                p.userId = obj.data.userId;
+                p[obj.field] = obj.value;
                 $.post('/pages/back/user/edit', p, function (res) {
                         layer.msg(res.msg);
                     }
                 );
-
             });
-
             //监听行中工具栏事件
             table.on('tool(userTableFilter)', function (obj) {
-               let d = obj.data;
+                let d = obj.data;
                 switch (obj.event) {
                     case 'showPermissions':
                         $.post('/pages/back/user/getUserRoles/' + d.phone, {}, function (res) {
@@ -156,42 +144,138 @@
                                 title: '调整用户权限',
                                 content: $('#showPermissionDiv').html() //这里content是一个普通的String
                             });
-                        layer.msg('添加');
+                            let hisRoles = res;//返回的是一个权限组（角色的集合）
+                            for (let x = 0; x < hisRoles.length; x++) {
+                                let r = hisRoles[x];
+                                $("[name=roleTitle]").each(function () {
+                                    let flag = this.id.split('-')[1];
+                                    if (flag == r.flag) {
+                                        this.checked = true;
+                                    }
+                                });
+                                let permissions = r.permissionVOS;// 拿到当前角色的权限
+                                if(permissions!=null){
+                                    for (let x = 0; x < permissions.length; x++) {
+                                        let p = permissions[x];
+                                        $("[id^=permissionId-]").each(function () {
+                                            let flag = this.id.split('-')[1];
+                                            if (flag == p.flag) {
+                                                this.checked = true;
+                                            }
+                                        })
+                                    }
+                                }
 
-                        layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
-                            title: "用户添加",
-                            content: $("#addForm").html()
-                        });
-                        form.render();
+                            }
+                            form.on('checkbox(roleTitle)', function (data) {
+                                let flag = data.elem.id.split('-')[1];
+                                let checked = data.elem.checked;
+                                $("[name=roleName-" + flag + "]").each(function () {
+                                    this.checked = checked;
+                                });
+                                form.render();
+                            });
+                            form.on('checkbox(permissionTitle)', function (data) {
+                                let flag = data.elem.name.split('-')[1];
+                                let checked = false;
+                                $("[name=roleName-" + flag + "]").each(function () {
+                                    if (this.checked) {
+                                        checked = this.checked;
+                                        return false;// 结束循环
+                                    }
+                                });
+                                $("#roleId-" + flag)[0].checked = checked;
+                                form.render();
+                            });
+                            form.render();
+                            $("#cancelDispatch").click(function () {
+                                layer.close(editRoleOpen)// 取消关闭修改角色的弹框
+                            });
+                            $("#sureDispatch").click(function () {
+                                // 首先应该封装被选中的角色和权限的数据，应该封装成一个集合，这个集合是roleVO,而且里边的属性是permissionList是一个数组
+                                let roleVOs = [];// 角色参数数组里边
+                                // 对所有选中角色进行遍历，查看是否选中，选中就将其放到集合里边。
+                                $("[name=roleTitle]").each(function () {
+                                    if (this.checked) {// 当前选中
+                                        let index = $(this).attr("ind").split('-')[1];// 获取系统级角色的下标
+                                        let roleVO = [[${systemRoles}]][index];// 获取系统级别的角色VO对象 permissions(满的)
+                                        let permissionsStr = '';// 逗号分隔的字符串
+                                        $("[name=roleName-" + roleVO.flag + "]").each(function () {//
+                                            if (this.checked) {// 指这个角色下边的权限
+                                                let pid = $(this).attr("pid");
+                                                permissionsStr += pid + ",";
+                                            }
+                                        });
+                                        permissionsStr = permissionsStr.substring(0, permissionsStr.length - 1);
+                                        roleVO.permissions = permissionsStr;
+                                        roleVOs.push(roleVO);
 
-                        form.on('select(addForm)', function (data) {// 监听表单的下拉选择.注意，你监听这个函数的时候，一定是要在表单渲染之后
-                            console.log(data.elem); //得到select原始DOM对象
-                            console.log(data.value); //得到被选中的值
-                            console.log(data.othis); //得到美化后的DOM对象
+                                    }
+                                });
+
+                                $.ajax({
+                                    url: '/pages/back/user/dispatchUserPermission/' + d.userId,// 请求数据服务器地址，只能是当前项目，JSONP才能访问外网（需要服务器配合才能用）
+                                    contentType: "application/json",// 默认就是表单数据(不写)，如果此时要传递的是json字符串，
+                                    // 那么此时就用application/json,如果此时要传递图片"multipart/form-data，还有数组，集合，还有对象，那么contentType必须指定为false
+                                    data: JSON.stringify(roleVOs),// 要上传的参数,把数组对象转换为JSON字符串
+                                    dataType: 'json',// 服务器响应数据：json,text,html,xml
+                                    error: function () {//请求错误的时候，会触发此函数
+
+                                    },
+                                    processData: true,//布尔值,一般都不用设置，规定通过请求发送的数据是否转换为查询字符串。默认是 true。如果此时上传的时候，有图片，这里必须设置false,
+                                    success: function (res) {// 请求成功，回调函数,data，指的就是服务器返回的数据
+                                        layer.msg(res.msg);
+                                    },
+                                    type: 'post',// ajax请求的方式，post或get
+                                });
+
+
+                            });
                         });
+
                         break;
-                    case 'delete':
-                        layer.msg('删除');
+                    case 'lock':
+                        // 锁定功能
+                        layer.msg('锁定功能')
+                        // $.post('/pages/back/user/lockUser/' + obj.data.userId, {}, function (res) {
+                        //     layer.layer(res);
+                        //     userTable.reload();
+                        // });
                         break;
-                    case 'update':
-                        layer.msg('编辑');
+                    case 'edit':
+                        // 在这之前还需要render(渲染)一把
                         break;
                 }
-                ;
             });
+            form.on('submit(queryForm)', function (data) {
+
+                userTable.reload({
+                    where: data.field,
+                    page: {curr: 1}
+                });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+            onInput($("#queryForm input"));
 
         });
-
     })
-
     function onInput(jObj) {
+
+
         jObj.on({
+
             'input': function () {
 
                 $("#queryBtn").click();// 这里直接换成查询按钮点击事件
+
             }
+
         })
     }
+
 </script>
+
 </body>
+
+
 </html>

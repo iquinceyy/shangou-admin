@@ -379,4 +379,17 @@
     </where>
   </select>
 
+  <select id="getMerchantBestGoods" resultType="com.qc.shangou.pojo.vo.GoodsVO">
+    select
+    a.merchant_id,a.goods_id,a.now_price,a.old_price,a.title,a.sub_title,a.pic,a.takeaway,a.sort,a.province,a.sold,a.create_time,a.praise
+    from goods a
+    where
+    a.on_sale=1
+    and a.merchant_id in
+    <foreach collection="ids" open="(" close=")" item="m" separator=",">
+      #{m.merchantId}
+    </foreach>
+    AND a.sold=(select max(sold) from goods where merchant_id=a.merchant_id)
+  </select>
+
 </mapper>

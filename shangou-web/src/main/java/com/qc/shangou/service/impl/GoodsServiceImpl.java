@@ -72,4 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
         return ResponseDTO.get(goodsDao.updateByPrimaryKeySelective(goods)==1);
     }
 
+
+
+
 }
