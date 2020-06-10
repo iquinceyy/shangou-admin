@@ -126,8 +126,13 @@
                 $.post('/login', data.field, function (res) {
                     layer.msg(res.msg);
                     if (res.res) {
-                        window.location = '/pages/back/loginSuccess?isBack=0';
-
+                        let redirectUrl = localStorage.getItem("redirectUrl");// 购物车也存到本地浏览器
+                        if(redirectUrl==null){
+                            window.location = '/pages/back/loginSuccess?isBack=0';
+                        }else {
+                            localStorage.removeItem('redirectUrl');
+                            window.location = redirectUrl;
+                        }
                     }
                 });
                 return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。

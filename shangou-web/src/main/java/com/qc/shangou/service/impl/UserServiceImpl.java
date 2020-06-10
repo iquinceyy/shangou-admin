@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
-            ResponseDTO.ok("更新成功！",user);
+           return ResponseDTO.ok("更新成功！",user);
         }
         return ResponseDTO.fail("更新失败！");
     }

@@ -4,11 +4,6 @@
 <div th:replace="fragment/js::js"></div>
 <div th:replace="fragment/map::map"></div>
 <style>
-    /*隐藏滚动条*/
-    .hideScrollBar::-webkit-scrollbar {
-        display: none;
-    }
-
     .headImg::after {
         opacity: 0.1;
         content: "";
@@ -111,22 +106,8 @@
                                 </div>
                             </div>
                             <div>
-                                <div style="display: flex;justify-content: space-between;overflow-x: auto">
-                                    <div th:each="x:${#numbers.sequence(1,10)}"
-                                         style="margin-right: 10px;background: rgb(245,245,245);border-radius: 10px;border: solid lightgray 0.5px;width: 110px;text-align: center">
-                                        <div style="border-radius: 10px">
-                                            <img style="width: 100%;border-radius: 10px 10px 0 0"
-                                                 src="https://img30.360buyimg.com/mobilecms/jfs/t1/87729/8/11065/147265/5e266c31E7be02442/b9930b64b5b35325.png">
-                                            <div style="text-align: center;margin-top: -20px">
-                                                <img style="width: 43px;border-radius: 100%"
-                                                     src="https://img30.360buyimg.com/vendersettle/s120x120_jfs/t1/126248/15/4403/100529/5edddcdcEf42ab917/48f0945e6199c412.png">
-                                            </div>
-                                        </div>
-                                        <div style="overflow: hidden;max-width: 110px;white-space: nowrap; text-overflow:ellipsis;font-weight: bold; line-height: 20px;padding: 10px">
-                                            重庆永辉超市 重庆永辉超市 重庆永辉超市 重庆永辉超市
-                                        </div>
-                                    </div>
-                                </div>
+                                <div id="merchantsDiv"
+                                     style="display: flex;justify-content: space-between;overflow-x: auto"></div>
                             </div>
                         </div>
                     </div>
@@ -142,9 +123,8 @@
                     <div id="nearbyGoodsDiv" style="background: rgb(245,245,245)">
                         <div style="padding: 5px">
                             <div>
-                                <div style="display: flex;flex-wrap: wrap;justify-content: center" id="goodsContainer">
-
-                                </div>
+                                <div style="display: flex;flex-wrap: wrap;justify-content: center"
+                                     id="goodsContainer"></div>
                             </div>
                         </div>
                     </div>
@@ -159,52 +139,64 @@
 <script th:inline="javascript" type="text/javascript">
     let position;
 
-    function flowGoods(flow, layer, goodsContainer) {
+
+    function flowGoods(flow, layer) {
+        let goodsContainer = $("#goodsContainer");
+        let merchantsDiv = $("#merchantsDiv");
+
         flow.load({
             elem: '#goodsContainer' //指定列表容器
             , scrollElem: '#mainContent'
             , done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
                 //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
-                console.log(page);
-                console.log(page);
                 let where = {};
                 where.page = page;
                 where.limit = 10;
+                getCookiePosition();
                 if (position != undefined) {
-
                     let minLngLat = position.offset(-5000, -5000);// 最小经纬度
-                    let maxLngLat = position.offset(5000, 5000);// 最大经纬度
+                    let maxLngLat = position.offset(5000, 5000); // 最大经纬度
                     where.minLng = minLngLat.getLng();
                     where.minLat = minLngLat.getLat();
                     where.maxLng = maxLngLat.getLng();
                     where.maxLat = maxLngLat.getLat();
-                } else {
-                    layer.msg("定位失败，请手动选择位置");
                 }
                 $.get('/pages/front/merchant/getNearbyMerchantsGoods', where, function (res) {
                     //假设你的列表返回在data集合中
                     let pages = Math.ceil(res.count / where.limit);
-
                     if (res.count > 0) {
+                        if (page == 1) {// 取第一页的商家
+                            merchantsDiv.empty();// 清空操作
+                        }
                         // 得到总页数
                         res.data.forEach(i => {
-                            console.log(i);
-                            let item = $("<div  style=\"width:46%;border-radius: 10px;background: white;margin: 5px\">\n" +
-                                "                                        <div>\n" +
-                                "                                            <img style=\"width: 100%;border-radius: 10px 10px 0 0 \"\n" +
-                                "                                                 src=\"https://img30.360buyimg.com/n6/s240x240_jfs/t1/128722/2/348/407939/5eb4d367E76531f71/b82cfba86e59bd0b.png\">\n" +
+                            if (page == 1) {// 附近商户仅仅展示第一页
+                                let mItem = $("<div  style=\"margin-right: 10px;background: rgb(245,245,245);border-radius: 10px;border: solid lightgray 0.5px;width: 110px;text-align: center\">\n" +
+                                    "                                        <div style=\"border-radius: 10px\">\n" +
+                                    "                                            <img style=\"width: 110px;border-radius: 10px 10px 0 0\"\n" +
+                                    "                                                 src='" + i.doorImg + "'>\n" +
+                                    "                                            <div style=\"text-align: center;margin-top: -20px\">\n" +
+                                    "                                                <img style=\"width: 43px;height: 43px;border-radius: 100%\"\n" +
+                                    "                                                     src='" + i.shopLogo + "'>\n" +
+                                    "                                            </div>\n" +
+                                    "                                        </div>\n" +
+                                    "                                        <div style=\"overflow: hidden;max-width: 110px;white-space: nowrap; text-overflow:ellipsis;font-weight: bold; line-height: 20px;padding: 10px\">" + i.shopName + "</div>\n" +
+                                    "                                    </div>");
+                                merchantsDiv.append(mItem);
+                            }
+                            let item = $("<div id='merchant-" + i.merchantId + "'  style=\"width:46%;border-radius: 10px;background: white;margin: 5px\">\n" +
+                                "                                        <div  >\n" +
+                                "                                            <img style=\"width: 100%;border-radius: 10px 10px 0 0 \"  src='" + i.bestGoods.pic + "'>\n" +
                                 "                                        </div>\n" +
-                                "                                        <div style=\"padding: 5px 10px\">\n" +
-                                "                                            <div>" + i.shopName + "</div>\n" +
+                                "                                        <div   style=\"padding: 5px 10px\">\n" +
+                                "                                            <div>" + i.bestGoods.title + "</div>\n" +
                                 "                                            <div style=\"display: flex;align-items: flex-end;padding: 5px 0 0 0 \">\n" +
-                                "                                                <div style=\"font-size: 20px;color: red;font-weight: bold\">¥99.99</div>\n" +
-                                "                                                <div style=\"font-size: 12px;color: gray;margin-left: 10px;text-decoration: line-through\">\n" +
-                                "                                                    ¥99.99\n" +
-                                "                                                </div>\n" +
+                                "                                                <div style=\"font-size: 20px;color: red;font-weight: bold\">¥" + i.bestGoods.nowPrice + "</div>\n" +
+                                "                                                <div style=\"font-size: 12px;color: gray;margin-left: 10px;text-decoration: line-through\">¥" + i.bestGoods.oldPrice + "</div>\n" +
                                 "                                            </div>\n" +
                                 "\n" +
                                 "                                        </div>\n" +
-                                "                                        <div style=\"display: flex;align-items: center;background: rgb(250,250,250);padding: 5px;border-radius: 0 0 10px 10px\">\n" +
+                                "                                        <div  style=\"display: flex;align-items: center;background: rgb(250,250,250);padding: 5px;border-radius: 0 0 10px 10px\">\n" +
                                 "                                            <div>\n" +
                                 "                                                <img style=\"width: 30px;height: 30px;border-radius: 100%\"\n" +
                                 "                                                     src='" + i.shopLogo + "'>\n" +
@@ -214,9 +206,16 @@
                                 "                                    </div>");
                             goodsContainer.prepend(item);
                         });
-                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
-                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        $(".layui-flow-more").css({width: '46%', 'margin': '5px'});
+
+                        $("[id^=merchant-]").click(function () {
+                            // 去商户的店铺页面
+                            window.location = '/pages/front/merchant/merchantShop/' + this.id.split('-')[1];
+                        })
+
                     }
+                    //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                    //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
                     next('', page < pages);
 
                 });
@@ -224,22 +223,45 @@
         })
     }
 
+    function setPositionText(p) {
+        let cityArea = $("#cityArea");
+        cityArea.text(p.address);
+        cityArea.next().css({display: 'none'})
+
+    }
+
+
+    function getCookiePosition() {
+        if (position == undefined) {
+            let pStr = getCookie("userPosition");
+            if (pStr == null) {
+                layer.msg("定位失败，请手动选择位置");
+                getCityInfo(function (res) {
+                    let cityArea = $("#cityArea");
+                    cityArea.text(res.city);
+                    cityArea.next().css({display: 'none'})
+                });
+            } else {
+                let p = JSON.parse(pStr);
+                setPositionText(p);
+                position = new AMap.LngLat(p.lng, p.lat);
+            }
+        }
+    }
+
     layui.use(['layer', 'form', 'carousel', 'flow'], function () {
         let carousel = layui.carousel;
         let flow = layui.flow;
         let layer = layui.layer;
-        let goodsContainer = $("#goodsContainer");
-
         initMap(function (res) {// 点击之后要做的事情
-            $("#cityArea").text(res.name);
             position = res.location;
-            flowGoods(flow, layer, goodsContainer);
-            console.log(position)
-        });
-        getCityInfo(function (res) {
-            let cityArea = $("#cityArea");
-            cityArea.text(res.city);
-            cityArea.next().css({display: 'none'})
+            let userPosition = {};
+            userPosition.address = res.name;
+            userPosition.lng = res.location.lng;
+            userPosition.lat = res.location.lat;
+            setPositionText(userPosition);
+            setCookie("userPosition", JSON.stringify(userPosition));
+            flowGoods(flow, layer);
         });
         $("#provinceDiv").click(function () {
             toggleMap();
@@ -253,9 +275,8 @@
             , height: '130px'
             //,anim: 'updown' //切换动画方式
         });
-
-        flowGoods(flow, layer, goodsContainer);
-
+        getCookiePosition();
+        flowGoods(flow, layer);
     })
 
 </script>

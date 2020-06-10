@@ -3,7 +3,10 @@
         width: 750px
     }
 }
-
+/*隐藏滚动条*/
+.hideScrollBar::-webkit-scrollbar {
+    display: none;
+}
 
 @media screen and (min-width: 992px) {
     .sg-container {
