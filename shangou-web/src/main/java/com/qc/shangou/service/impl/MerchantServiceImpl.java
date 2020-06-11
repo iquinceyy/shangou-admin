@@ -135,7 +135,25 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public MerchantVO selectMerchantById(Long merchantId) {
-        return null;
+        //1.查询商铺的基本字段（信息）
+        MerchantVO merchantVO = merchantDao.selectBaseKey(merchantId);
+        //2.根据商户merchantId查询全部商品 类型
+        List<GoodsTypeVO> goodsTypeVOS = goodsTypeDao.selectByMerchantId(merchantId);
+
+        if (!CollectionUtils.isEmpty(goodsTypeVOS)){
+            //3.根据商品类型集合  批量查询
+            List<GoodsVO> goodsVOS = goodsDao.selectGoodsByGoodsType(goodsTypeVOS);
+            //4.按商品类型分组
+            Map<Long, List<GoodsVO>> collect = goodsVOS.stream().collect(Collectors.groupingBy(GoodsVO::getGoodsTypeId));
+            System.out.println(collect);
+            //设置这种商品类型的商品
+            for (GoodsTypeVO g : goodsTypeVOS) {
+                g.setGoodsVOS(collect.get(g.getGoodsTypeId()));;
+            }
+        }
+        merchantVO.setGoodsTypeList(goodsTypeVOS);
+
+        return merchantVO;
     }
 
 }

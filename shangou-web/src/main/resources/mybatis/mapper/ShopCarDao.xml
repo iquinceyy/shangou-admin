@@ -17,7 +17,7 @@
     from shop_car
     where shop_car_id = #{shopCarId,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from shop_car
     where shop_car_id = #{shopCarId,jdbcType=INTEGER}
   </delete>
@@ -84,4 +84,17 @@
       goods_id = #{goodsId,jdbcType=BIGINT}
     where shop_car_id = #{shopCarId,jdbcType=INTEGER}
   </update>
+  <update id="updateShopCar">
+    update shop_car
+    set count=#{count}
+    where merchant_id = #{merchantId},goods_id = #{goodsId},user_id = #{userId}
+  </update>
+  <select id="selectShopCarCountByCar" resultType="java.lang.Integer">
+    select
+    count(*)
+    from shop_car where user_id = #{userId} and merchant_id=#{merchantId} and
+    goods_id=#{goodsId}
+  </select>
+
+
 </mapper>

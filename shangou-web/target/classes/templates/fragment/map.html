@@ -2,11 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <div th:fragment="map">
+    <style>
+        .amap-sug-result {
+            z-index: 21001002;
+        }
+    </style>
     <script type="text/javascript"
             src="https://webapi.amap.com/maps?v=2.0&key=4ef33553bc26e63d127b878325234f2f"></script>
 
     <div class="layui-row" id="mapDiv"
-         style="position: absolute;height: 100%;width: 100%;background: rgba(0,0,0,0.3);display: none;z-index: 10;">
+         style="position: absolute;height: 100%;width: 100%;background: rgba(0,0,0,0.3);display: none;z-index: 20991002;">
         <div id="mapShadow" style="position: absolute;left: 0;right: 0;top: 0;bottom: 0">
         </div>
         <div class="layui-col-xs12 layui-col-sm6 layui-col-md-offset3 layui-col-sm-offset3" style="height: 100%;">
@@ -15,7 +20,7 @@
                     <input class="layui-input" id="searchPlace" type="text" placeholder="地点搜索"/>
                 </div>
                 <div id="mapContainer" style="height: 300px"></div>
-                <div style="padding: 10px;flex: 1;overflow-y: auto" id="addressListDiv">
+                <div style="padding: 10px;flex: 1;overflow-y: auto">
                 </div>
             </div>
         </div>
@@ -36,7 +41,6 @@
                 f(result);
             });
         }
-
         // 初始化map,selectedPosition选择地址后的回调函数
         function initMap(selectedPosition) {
             map = new AMap.Map('mapContainer', {// 创建一个map对象
@@ -86,7 +90,6 @@
                         console.log('定位错误')
                     }
                 });
-
 
                 // 无需再手动执行search方法，autoComplete会根据传入input对应的DOM动态触发search
                 autoComplete.on('select', function (a) {
@@ -148,7 +151,7 @@
         }
 
         function renderAddressList(list, f) {
-            let addressListDiv = $("#addressListDiv");
+            let addressListDiv = $("#mapContainer").next();
             addressListDiv.empty();
             list.forEach((i, index) => {
                 let show = index == 0 ? '' : 'none';
@@ -163,8 +166,8 @@
                         currentInput[0].lat = i.location.lat;
                         currentInput.val(i.address + " " + i.name);
                         currentInput.nextAll().remove();
-                        let lngInput = $("<input type='hidden' name='lng' value='" + i.location.lng + "'>")
-                        let latInput = $("<input type='hidden' name='lat' value='" + i.location.lat + "'>")
+                        let lngInput = $("<input type='hidden' name='lng' value='" + i.location.lng + "'>");
+                        let latInput = $("<input type='hidden' name='lat' value='" + i.location.lat + "'>");
                         currentInput.after(lngInput);
                         currentInput.after(latInput);
                     }

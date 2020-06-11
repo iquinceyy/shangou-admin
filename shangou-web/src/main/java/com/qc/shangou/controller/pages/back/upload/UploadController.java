@@ -64,7 +64,7 @@ public class UploadController extends BaseController {
 
         if (res.getRes()){//true
             String object = res.getObject(String.class);
-            if (StringUtils.isEmpty(object)){
+            if (!StringUtils.isEmpty(object)){
                 Map<String,Object> map =new HashMap<>();
                 map.put("errno",0);
                 map.put("data",object.split(","));

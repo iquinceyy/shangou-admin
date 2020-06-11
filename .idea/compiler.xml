@@ -6,12 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="shangou-dada" />
         <module name="shangou-pojo" />
         <module name="shangou-web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="shangou-admin" target="1.8" />
+      <module name="shangou-dada" target="1.8" />
       <module name="shangou-pojo" target="1.8" />
       <module name="shangou-web" target="1.8" />
     </bytecodeTargetLevel>
@@ -19,6 +21,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="shangou-admin" options="-parameters" />
+      <module name="shangou-dada" options="-parameters" />
       <module name="shangou-pojo" options="-parameters" />
       <module name="shangou-web" options="-parameters" />
     </option>

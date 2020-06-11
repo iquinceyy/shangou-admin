@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/shangou-admin.iml" filepath="$PROJECT_DIR$/shangou-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shangou-dada/shangou-dada.iml" filepath="$PROJECT_DIR$/shangou-dada/shangou-dada.iml" />
       <module fileurl="file://$PROJECT_DIR$/shangou-pojo/shangou-pojo.iml" filepath="$PROJECT_DIR$/shangou-pojo/shangou-pojo.iml" />
       <module fileurl="file://$PROJECT_DIR$/shangou-web/shangou-web.iml" filepath="$PROJECT_DIR$/shangou-web/shangou-web.iml" />
     </modules>

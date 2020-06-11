@@ -84,7 +84,7 @@ public class GoodsController extends BaseController {
 
     //修改   1
     @RequestMapping("editPre/{goodsId}")
-    String editPre(@RequestBody Long goodsId,Model model){
+    String editPre(@PathVariable Long goodsId,Model model){
         List<GoodsTypeVO> merchantGoodsTypes = goodsTypeService.getMerchantGoodsTypes(getMerchantId());
         model.addAttribute("goodsTypes",merchantGoodsTypes);
         Goods goods = goodsService.getById(goodsId);
@@ -96,8 +96,8 @@ public class GoodsController extends BaseController {
     @RequestMapping("edit")
     @ResponseBody
     // 需要商户管理角色才能访问这个接口
-    @RequiresRoles("merchant")
-    @RequiresPermissions("goods:edit")
+//    @RequiresRoles("merchant")
+//    @RequiresPermissions("goods:edit")
     ResponseDTO editGoods(Goods goods) {
         //设置最后一次的修改人
         goods.setUpdateUser(getUserId());
@@ -121,7 +121,7 @@ public class GoodsController extends BaseController {
         goods.setCreateTime(date);
         goods.setUpdateTime(date);
         goods.setProvince(merchant.getProvince());
-
+        System.out.println(goods.getDetail());
         return goodsService.addGoods(goods);
     }
 

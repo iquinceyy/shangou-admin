@@ -576,6 +576,11 @@
       <include refid="Base_Column_List"/>
       from merchant where user_id = #{userId}
     </select>
+    <select id="selectBaseKey" resultType="com.qc.shangou.pojo.vo.MerchantVO">
+      select
+      <include refid="Base_Column_List"/>
+      from merchant where merchant_id = #{merchantId}
+    </select>
 
     <delete id="deleteMerchant">
     delete from merchant where merchant_id in

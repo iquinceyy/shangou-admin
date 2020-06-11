@@ -32,4 +32,6 @@ public interface MerchantDao {
     Merchant seleleMerchantIdIdByPhone(String phone);
 
     MerchantVO selectByUserId(Long userId);
+
+    MerchantVO selectBaseKey(Long merchantId);
 }

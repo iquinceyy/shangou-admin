@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="icon" th:href="@{/images/logo/logo.png}" type="image/x-icon"/><!--公司网址图标-->
+<div th:replace="fragment/js::js"></div>
+<div th:replace="fragment/packagingFee::packagingFee"></div>
+<div th:replace="fragment/userAddressList::userAddressList"></div>
+<script type="text/javascript" th:src="@{/qc/layer/layer.js}"></script>
+<body>
+<div class="layui-row" style="position: absolute;left: 0;top: 0;bottom: 0;right: 0">
+    <div class="layui-col-xs12 layui-col-md6 layui-col-md-offset3 "
+         style="height: 100%;position: relative;">
+        <h3 style="text-align: center">确认订单</h3>
+        <form id="orderForm1" th:action="@{/pages/back/order/add}" method="post">
+            <div style="background: rgb(245,245,245);padding: 10px;">
+                <div style="background: white;padding: 10px;border-radius: 5px">
+                    <div>
+                        <div style="display: flex;justify-content: space-between;align-items: center"
+                             id="selectAddress">
+                            <div id="userDefaultAddress">
+
+                            </div>
+                            <div id="newAddress" style="display: none">新建收货地址</div>
+                            <div style="color: lightgray"><i class="layui-icon layui-icon-right"
+                                                             style="font-size: 13px;margin-left: 5px;margin-top: 2px"></i>
+                            </div>
+                        </div>
+                        <hr>
+                        <div style="display: flex;justify-content: space-between;align-items: center">
+                            <h3 style="font-weight: bold">送达时间</h3>
+                            <div style="color: orange">立即送达 <span
+                                    th:text="${#dates.format(#dates.createNow(),'HH:mm')}">15:30</span>-<span
+                                    th:text="${#dates.format(#dates.create(#dates.year(#dates.createNow()),#dates.month(#dates.createNow()),#dates.day(#dates.createNow()),#dates.hour(#dates.createNow()),#dates.minute(#dates.createNow())+40),'HH:mm')}">16:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="background: white;padding: 10px;border-radius: 5px;margin-top: 10px">
+                    <div>
+                        <div style="display: flex;align-items: center;justify-content: space-between">
+                            <h4 style="font-weight: bold" id="shopName">店铺名字</h4>
+                            <div style="color: orange;border-radius: 5px 0 5px 0;border: solid 1px orange;padding: 0 5px">
+                                顺丰专送
+                            </div>
+                        </div>
+                        <hr>
+                        <div>
+                            <div id="orderItemsDiv"></div>
+                            <div style="text-align: center;background: rgb(240,240,240);border-radius: 5px">共<span
+                                    id="allCount">5</span>件
+                            </div>
+                            <div style="display: flex;justify-content: space-between;padding: 10px 0">
+                                <div id="showPackagingFeeDetail">包装费<i class="layui-icon layui-icon-help"></i></div>
+                                <div>¥<span id="allPackagingFee">0.5</span></div>
+                            </div>
+                            <div style="display: flex;justify-content: space-between;padding: 10px 0">
+                                <div>配送费</div>
+                                <div><span id="distance" style="color: lightgray;font-size: 12px"></span>¥<span
+                                        id="deliveryFee">5</span></div>
+                            </div>
+                            <div style="display: flex;justify-content: space-between;padding: 10px 0">
+                                <div>运费优惠</div>
+                                <div style="color: lightgray">暂无优惠</div>
+                            </div>
+                            <div style="display: flex;justify-content: space-between;padding: 10px 0">
+                                <div>红包</div>
+                                <div style="color: lightgray">暂无红包</div>
+                            </div>
+                            <div style="padding-right: 10px">
+                                <div>备注</div>
+                                <textarea name="note" style="height: 40px;width: 100%;padding: 5px;resize: none"
+                                          placeholder="您有和要求请填写"></textarea>
+                            </div>
+                            <hr>
+                            <div style="display: flex;align-items: center;justify-content: flex-end">
+                                <div>共节省¥<span id="allRelief">60.8</span></div>
+                                <div style="display: flex;margin-left: 20px;align-items: center">实付金额<h2
+                                        style="color: orangered;font-weight: bold;margin-left: 10px"
+                                >¥<span id="nowAllCost">60.8</span></h2></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="layui-btn layui-btn-danger" type="button" id="commit"
+                    style="width: 100%;border-radius: 0;height: 40px;font-size: 1rem">提交订单
+            </button>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript" type="text/javascript">
+    // 算购物车里边的钱
+    // 二话不说，先把传递过来的参数取出来
+    let paramStr = localStorage.getItem("orderParam");
+    let p; // 声明一个参数对象
+    if (paramStr != null) {
+        p = JSON.parse(paramStr);// 解析成对象
+        console.log(p)
+    } else {
+        // 参数为空，
+        layer.msg('订单数据为空！请重新选择商品');
+        setTimeout(function () {
+            window.location = '/'
+        }, 2000)
+    }
+    let errorImg = '';// 声明错误图片路径
+    let adds = [];
+    let curentAddress = {};
+    let deliverFee = 0;
+
+    // 初始化：挂载数据到标签里边
+    function mountedData(d) {
+        $("#shopName").text(d.merchant.shopName);
+        // 订单详情div
+        let orderItemsDiv = $("#orderItemsDiv");
+        d.orderInfos.forEach(g => {
+            let item = $("<div style=\"display: flex;align-items: center\" >\n" +
+                "                                    <div>\n" +
+                "                                        <img src='" + g.pic + "' style=\"width: 40px;height: 40px;border-radius: 3px\"\n" +
+                "                                           />\n" +
+                "                                    </div>\n" +
+                "                                    <div style=\"margin-left: 10px;flex-grow: 1\">\n" +
+                "                                        <div >" + g.title + "</div>\n" +
+                "                                        <div style=\"display: flex;justify-content: space-between;padding: 10px 0;font-weight: bold\">\n" +
+                "                                            <div>¥<span  >" + g.nowPrice + "</span> x <span >" + g.count + "</span>\n" +
+                "                                            </div>\n" +
+                "                                            <div>¥<span  >" + (g.nowPrice * g.count).toFixed(2) + "</span></div>\n" +
+                "                                        </div>\n" +
+                "                                    </div>\n" +
+                "                                </div>");
+
+            orderItemsDiv.append(item);
+        });
+
+        $("#allCount").text(p.allCount);
+
+        $("#allPackagingFee").text(p.allPackagingFee);
+
+        $("#allRelief").text(p.allRelief);
+        $("#nowAllCost").text(p.nowAllCost);
+        getUserAddressAndSetDefaultAddress();
+    }
+
+    // 获取用户的默认收货地址，并且将默认收货地址设置到订单提交页面
+    function getUserAddressAndSetDefaultAddress() {
+        $.get('/pages/back/address/getUserAddress', {}, function (res) {
+            if (res.res) {
+                let list = res.data;// 地址集合取出来
+                if (list.length > 0) {// 有地址
+                    adds = list;
+                    let defaultAdd = list.find(e => e.moren);
+                    if (defaultAdd == undefined) {// 没有默认地址，就找第一个
+                        defaultAdd = list[0];
+                    }
+                    setDefaultAddress(defaultAdd)
+                } else {// 没有地址
+                    setDefaultAddress()
+                }
+            }
+        });
+    }
+
+    // 设置收货地址
+    function setDefaultAddress(defaultAdd) {
+        if (defaultAdd == undefined) {
+            $("#newAddress").css({display: ''});// 就让新建收货地址显示
+        } else {
+            curentAddress = defaultAdd;// 当前收货地址对象
+            let userDefaultAddress = $("#userDefaultAddress");
+            userDefaultAddress.empty();
+            let phone = defaultAdd.phone.substring(0, 3) + "****" + defaultAdd.phone.substring(7);
+            let aDiv = $("<div style=\"display: flex;align-items: center\">\n" +
+                "                                    <span style=\"background: #50d15a;color: white;padding: 1px 2px;border-radius:2px;white-space: nowrap\">" + defaultAdd.tag + "</span>\n" +
+                "                                    <h2 style=\"font-weight: bold\" id=\"addressTxt\">" + defaultAdd.name + defaultAdd.floorDoorNumber + "</h2>\n" +
+                "                                </div>\n" +
+                "                                <div style=\"color: gray\">\n" +
+                "                                    <span id=\"receiverTxt\">" + defaultAdd.receiver + "</span>\n" +
+                "                                    <span style=\"margin-left: 5px\" id=\"receiverPhoneTxt\">" + phone + "</span>\n" +
+                "                                </div>");
+
+            userDefaultAddress.append(aDiv);
+        }
+        // 去查询运费
+        $.post('/pages/back/order/getDeliveryFee', {
+            merchantId: p.merchant.merchantId,
+            addressId: defaultAdd.addressId,
+            actuallyPaid: p.nowAllCost,
+        }, function (res) {
+            console.log(res)
+            if (res) {
+                deliverFee = res.data.deliverFee;
+                $("#deliveryFee").text(deliverFee);
+                $("#distance").text('(距离' + res.data.distance + '米)');
+                p.deliveryNo = res.data.deliveryNo;// 达达单号
+                $("#nowAllCost").text((parseFloat(p.nowAllCost) + parseFloat(deliverFee)).toFixed(2));
+            }
+        });
+
+
+    }
+
+    $(function () {
+        layui.use(['layer', 'form',], function () {
+            var layer = layui.layer;
+            var form = layui.form;
+            mountedData(p);
+            initMap();
+            $("#showPackagingFeeDetail").click(function () {
+                showPackagingFeeDetail(p.orderInfos, p.allPackagingFee)
+            });
+            $("#selectAddress").click(function () {
+                // 弹出收货地址列表
+                showUserAddress(form, function (a) {
+                    setDefaultAddress(a);// 把选中的地址设置给
+                })
+            });
+            $("#commit").click(function () {
+                let od = {};
+                od.merchantId = p.merchant.merchantId;// 商户号
+                od.receiverName = curentAddress.receiverName;//收货地址
+                od.receiverPhone = curentAddress.receiverPhone;//收货电话
+                od.receiverAddress = curentAddress.name + curentAddress.floorDoorNumber;//地址门牌号
+                od.tag = curentAddress.tag;//地址标签
+                od.receiverLng = curentAddress.lng;//经度
+                od.receiverLat = curentAddress.lat;//纬度
+                od.receiverCityCode = curentAddress.cityCode;// 城市编码
+                od.couponRelief = 0;// 优惠券减免
+                od.allRelief = p.allRelief;// 全部减免
+                od.redBagRelief = 0;//红包减免
+                od.actuallyPaid = p.nowAllCost + deliverFee;//实际付款
+                od.deliveryFee = deliverFee;// 配送费；
+                od.allCost = p.oldAllCost;// 原价
+                od.packagingFee = p.allPackagingFee;// 包装费
+                od.deliveryNo = p.deliveryNo;// 达达单号
+                // 差一个配送费
+
+
+            })
+
+        });
+    })
+
+</script>
+
+
+</body>
+
+</html>

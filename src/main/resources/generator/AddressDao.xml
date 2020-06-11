@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qc.shangou.dao.AddressDao">
+  <resultMap id="BaseResultMap" type="com.qc.shangou.pojo.entity.Address">
+    <id column="address_id" jdbcType="BIGINT" property="addressId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="pcd" jdbcType="VARCHAR" property="pcd" />
+    <result column="floor_door_number" jdbcType="VARCHAR" property="floorDoorNumber" />
+    <result column="phone" jdbcType="CHAR" property="phone" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="moren" jdbcType="BOOLEAN" property="moren" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="lng" jdbcType="DOUBLE" property="lng" />
+    <result column="lat" jdbcType="DOUBLE" property="lat" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="city_code" jdbcType="VARCHAR" property="cityCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    address_id, user_id, pcd, floor_door_number, phone, receiver, moren, tag, lng, lat, 
+    `name`, city_code
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from address
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from address
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="address_id" keyProperty="addressId" parameterType="com.qc.shangou.pojo.entity.Address" useGeneratedKeys="true">
+    insert into address (user_id, pcd, floor_door_number, 
+      phone, receiver, moren, 
+      tag, lng, lat, `name`, 
+      city_code)
+    values (#{userId,jdbcType=BIGINT}, #{pcd,jdbcType=VARCHAR}, #{floorDoorNumber,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=CHAR}, #{receiver,jdbcType=VARCHAR}, #{moren,jdbcType=BOOLEAN}, 
+      #{tag,jdbcType=VARCHAR}, #{lng,jdbcType=DOUBLE}, #{lat,jdbcType=DOUBLE}, #{name,jdbcType=VARCHAR}, 
+      #{cityCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="address_id" keyProperty="addressId" parameterType="com.qc.shangou.pojo.entity.Address" useGeneratedKeys="true">
+    insert into address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="pcd != null">
+        pcd,
+      </if>
+      <if test="floorDoorNumber != null">
+        floor_door_number,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="receiver != null">
+        receiver,
+      </if>
+      <if test="moren != null">
+        moren,
+      </if>
+      <if test="tag != null">
+        tag,
+      </if>
+      <if test="lng != null">
+        lng,
+      </if>
+      <if test="lat != null">
+        lat,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="cityCode != null">
+        city_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="pcd != null">
+        #{pcd,jdbcType=VARCHAR},
+      </if>
+      <if test="floorDoorNumber != null">
+        #{floorDoorNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="receiver != null">
+        #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="moren != null">
+        #{moren,jdbcType=BOOLEAN},
+      </if>
+      <if test="tag != null">
+        #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null">
+        #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null">
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qc.shangou.pojo.entity.Address">
+    update address
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="pcd != null">
+        pcd = #{pcd,jdbcType=VARCHAR},
+      </if>
+      <if test="floorDoorNumber != null">
+        floor_door_number = #{floorDoorNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="receiver != null">
+        receiver = #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="moren != null">
+        moren = #{moren,jdbcType=BOOLEAN},
+      </if>
+      <if test="tag != null">
+        tag = #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null">
+        lng = #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null">
+        lat = #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null">
+        city_code = #{cityCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qc.shangou.pojo.entity.Address">
+    update address
+    set user_id = #{userId,jdbcType=BIGINT},
+      pcd = #{pcd,jdbcType=VARCHAR},
+      floor_door_number = #{floorDoorNumber,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=CHAR},
+      receiver = #{receiver,jdbcType=VARCHAR},
+      moren = #{moren,jdbcType=BOOLEAN},
+      tag = #{tag,jdbcType=VARCHAR},
+      lng = #{lng,jdbcType=DOUBLE},
+      lat = #{lat,jdbcType=DOUBLE},
+      `name` = #{name,jdbcType=VARCHAR},
+      city_code = #{cityCode,jdbcType=VARCHAR}
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </update>
+
+  <select id="getUserAddress" resultType="com.qc.shangou.pojo.vo.AddressVO"></select>
+
+
+</mapper>

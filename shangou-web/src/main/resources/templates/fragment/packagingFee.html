@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="packagingFee">
+    <script type="text/html" id="packagingFeeDiv">
+        <div id="packagingFeeItems">
+        </div>
+    </script>
+    <script th:inline="javascript" type="text/javascript">
+
+        function showPackagingFeeDetail(orderInfos, allPackagingFee) {
+            layer.open({// 弹框之后，如遇到select标签，radio,checkbox之类，需要使用表单渲染
+                type: 1,
+                offset: '0',
+                area: '100%',
+                title: "包装费明细",
+                shadeClose: true,
+                content: $("#packagingFeeDiv").html()
+            });
+            let packagingFeeItems = $("#packagingFeeItems")
+            orderInfos.forEach(o => {
+                let i = $("<div style=\"display: flex;justify-content: space-between;padding: 5px 10px\">\n" +
+                    "            <div style='width: 30%;'>" + o.title + "</div>\n" +
+                    "            <div >¥" + o.packagingFee + "</div>\n" +
+                    "            <div>x</div>\n" +
+                    "            <div>" + o.count + "</div>\n" +
+                    "            <div style='width: 20%'>¥" + (o.count * o.packagingFee).toFixed(2) + "</div>\n" +
+                    "        </div>")
+                packagingFeeItems.append(i)
+            });
+            let heji = $("<div style='padding: 5px'>合计:" + allPackagingFee + "</div>")
+            packagingFeeItems.append($("<hr/>"))
+            packagingFeeItems.append(heji)
+        }
+
+    </script>
+</div>
+
+
+</html>

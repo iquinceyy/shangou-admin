@@ -391,5 +391,13 @@
     </foreach>
     AND a.sold=(select max(sold) from goods where merchant_id=a.merchant_id)
   </select>
+    <select id="selectGoodsByGoodsType" resultType="com.qc.shangou.pojo.vo.GoodsVO">
+      select
+       <include refid="Base_Column_List"/>
+      from goods where goods_type_id in
+      <foreach collection="ids" open="(" close=")" separator="," item="g">
+        #{g.goodsTypeId}
+      </foreach>
+    </select>
 
 </mapper>

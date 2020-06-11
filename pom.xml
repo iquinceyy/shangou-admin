@@ -8,6 +8,7 @@
     <modules>
         <module>shangou-pojo</module>
         <module>shangou-web</module>
+        <module>shangou-dada</module>
     </modules>
 
     <parent>
@@ -23,7 +24,17 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- 用阿里巴巴的FastJSON -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.62</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.qc.shangou</groupId>
+                <artifactId>shangou-dada</artifactId>
+            </dependency>
             <dependency>
                 <groupId>com.qc.shangou</groupId>
                 <artifactId>shangou-pojo</artifactId>

@@ -28,4 +28,6 @@ public interface GoodsDao {
     Integer ajaxGoodsCount(GoodsQuery query);
 
     List<GoodsVO> getMerchantBestGoods(@Param("ids") List<MerchantVO> merchantVOS);
+
+    List<GoodsVO> selectGoodsByGoodsType(@Param("ids") List<GoodsTypeVO> goodsTypeVOS);
 }

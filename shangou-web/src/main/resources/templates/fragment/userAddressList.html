@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="userAddressList">
+    <div th:replace="fragment/map::map"></div>
+
+    <script type="text/html" id="selectAddressDiv">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <div id="addressListDiv"></div>
+                <button class="layui-btn layui-btn-normal" id="newAddressFormShow" type="button"
+                        style="width: 100%;background: orange">新建收货地址
+                </button>
+            </div>
+        </form>
+    </script>
+    <script type="text/html" id="addUserAddressForm">
+        <form class="layui-form" style="padding: 20px">
+            <div class="layui-form-item">
+                <label class="layui-form-label">小区大厦</label>
+                <div class="layui-input-block">
+                    <input type="text" mapPicker name="name" placeholder="请输入小区大厦" lay-verify="required"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">楼层门牌号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="floorDoorNumber" placeholder="请输入楼层门牌号" lay-verify="required"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">收货人</label>
+                <div class="layui-input-block">
+                    <input type="text" name="receiver" placeholder="请输入收货人" lay-verify="required"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">收货电话</label>
+                <div class="layui-input-block">
+                    <input type="text" name="phone" placeholder="请输入收货电话" lay-verify="phone"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">设为默认</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="moren" value="1" lay-skin="switch">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签</label>
+                <div class="layui-input-block">
+                    <input type="text" name="tag" maxlength="2" placeholder="请输入标签"
+                           style="width: 200px" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" style="background: orange" lay-submit lay-filter="commit">立即添加</button>
+                </div>
+            </div>
+        </form>
+    </script>
+
+    <script th:inline="javascript" type="text/javascript">
+        // 渲染收货地址函数
+        function renderAddress(adds, open, f) {
+            let addressListDiv = $("#addressListDiv");
+            addressListDiv.empty();// 清空
+            adds.forEach(a => {
+                let phone = a.phone.substring(0, 3) + "****" + a.phone.substring(7)
+                let item = $("<div style=\"display: flex;align-items: center;padding: 10px 20px;border-bottom: solid lightgray 0.1px\">\n" +
+                    "                    <div   style=' margin-right: 30px'>\n" +
+                    "                        <div style=\"margin: 5px\"><span >" + a.receiver + "</span> <span >" + phone + "</span>\n" +
+                    "                        </div>\n" +
+                    "                        <div style=\"margin: 5px\"><span style=\"background: #50d15a;color: white;padding: 1px 2px;border-radius:2px\"\n" +
+                    "                        >" + a.tag + "</span>\n" +
+                    "                            <span  >" + a.name + a.floorDoorNumber + "</span>\n" +
+                    "                        </div>\n" +
+                    "                    </div>\n" +
+                    "                    <div style=\"padding-left: 50px;position: absolute;right: 20px;\">\n" +
+                    "                        <i class=\"layui-icon layui-icon-edit\" style=\"font-size: 25px\"></i>\n" +
+                    "                    </div>\n" +
+                    "                </div>");
+
+                item.children("div:eq(0)").click(function () {
+                    layer.close(open);
+                    f(a);// 执行回调函数。js很高明
+                });
+                addressListDiv.append(item);
+            });
+        }
+
+        // 渲染展示用户收货地址
+        function showUserAddress(form, f) {// 必须包含表单和layer插件，f指的是回调函数
+            $.get('/pages/back/address/getUserAddress', {}, function (res) {// 获取用户的地址列表
+                let list = res.data;// 取出地址集合
+                let selectAddress = layer.open({
+                    type: 1,
+                    area: '100%',
+                    offset: '0',
+                    title: '选择收货地址',
+                    shadeClose: true,
+                    content: $('#selectAddressDiv').html() //这里content是一个普通的String
+                });
+
+                renderAddress(list, selectAddress, f);// 渲染数据，至少要用到两次以上
+
+
+                $("#newAddressFormShow").click(function () {
+                    let addOpen = layer.open({
+                        type: 1,
+                        area: '100%',
+                        offset: '0',
+                        title: '新建收货地址',
+                        shadeClose: true,
+                        content: $('#addUserAddressForm').html() //这里content是一个普通的String
+                    });
+                    form.render();
+                    initMap();// 渲染地图
+                    form.on('submit(commit)', function (d) {
+                        $.post('/pages/back/address/add', d.field, function (res) {// 新增收货地址完成，应该立刻刷新最新的收货地址列表
+                            layer.msg(res.msg);
+                            layer.close(addOpen);
+                            if (res.res) {
+                                $.get('/pages/back/address/getUserAddress', {}, function (res) {
+                                    if (res.res) {
+                                        let list = res.data;
+                                        if (list.length > 0) {
+                                            renderAddress(list, selectAddress, f);
+                                        }
+                                    }
+                                });
+                            }
+
+                        });
+                        return false;
+                    })
+                })
+
+            });
+
+
+        }
+    </script>
+</div>
+
+
+</html>

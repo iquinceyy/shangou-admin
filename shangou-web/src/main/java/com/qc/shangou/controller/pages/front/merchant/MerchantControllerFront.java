@@ -39,8 +39,9 @@ public class MerchantControllerFront {
         return merchantService.getNearByMerchantGoods(merchantQuery);
     }
 
+
     @RequestMapping("merchantShop/{merchantId}")
-    String MerchantShopCar(@PathVariable Long merchantId,Model model){
+    String MerchantShop(@PathVariable Long merchantId,Model model){
         MerchantVO merchantVO = merchantService.selectMerchantById(merchantId);
         model.addAttribute("m",merchantVO);
         return "/pages/front/merchant/merchantShop";
